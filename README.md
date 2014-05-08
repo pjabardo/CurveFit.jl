@@ -129,6 +129,14 @@ U2 = CurveFit.apply_fit(f2, e)
 plot(U, E, "o", U1, e, "r-", U2, e, "g-", linewidth=3)
 ```
 
+## StatsBase abstractions for statistical models
+
+Module `StatsBase` provides a few generic functions. For now I only implement
+methods for functions `fit`, which is basically an alias for `curve_fit` and 
+the method `coef` which returns the fitting coefficients. I will try later to 
+implement the other methods.
+
+
 
 
 [![Build Status](https://travis-ci.org/pjabardo/CurveFit.jl.svg)](https://travis-ci.org/pjabardo/CurveFit.jl)
