@@ -1,17 +1,7 @@
 using Base.LinAlg.BLAS
 
     
-
-function least_squares(A, y)
-
-    Q,R = qr(A)
-    
-    #r = Q'*y
-    r = BLAS.gemv('T', 1.0, Q, y)
-    coefs = BLAS.trsv('U', 'N', 'N', R, r)
-
-    return coefs
-end
+least_squares{T<:Number}(A::StridedVecOrMat{T}, y::Vector{T}) = A \ y
 
 
 linear_fit(x, y) = least_squares(hcat(ones(length(x)), x), y)
