@@ -1,5 +1,3 @@
-using Base.LinAlg.BLAS
-
     
 least_squares{T<:Number}(A::StridedVecOrMat{T}, y::Vector{T}) = A \ y
 
