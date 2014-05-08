@@ -17,8 +17,8 @@ The basic function is `least_squares`:
 ```
 coefs = least_squares(A, y)
 ```
-where `A[:,i] = f_i(x)`. While usually `x` is a single variable, in general if several
-independent variables are used, the same procedure can be used: 
+where `A[:,i] = f_i(x)`. While usually `x` is a single variable, in general, if several
+independent variables are required, the same procedure can be used, something along the line of: 
 `A[:,i] = f_i(x1, x2, ..., xn)`.
 
 Several typical cases are possible:
@@ -41,16 +41,15 @@ plot(x, y0, "o", x, y0b, "r-", linewidth=3)
 
 ## Nonlinear least squares
 
-Sometimes the fitting function is not linear on the coefficients. In this case, givem
-an approximation of the coefficients, the function is linearized around this 
-approximation and linear least squares is used to calculate a better 
-approximation of the coefficients. This iteration is repeated until convergence is 
+Sometimes the fitting function is non linear with respect to the  fitting coefficients. In this case, given
+an approximation of the coefficients, the fitting function is linearized around this 
+approximation and linear least squares is used to calculate a correction to the approximate coefficients. This iteration is repeated until convergence is 
 reached. The fitting function has the following form:
 ```
-f(x1, x2, x3, ..., xn, a1, a2, ... ap) = 0
+f(x_1, x_2, x_3, ..., x_n, a_1, a_2, ...,  a_p) = 0
 ```
 where `xi` are the known data points and `ai` are the coefficients that 
-should be calculated. 
+should be fitted. 
 
 The basic function that implements the nonlinear least squares has the following 
 interface:
@@ -58,16 +57,16 @@ interface:
 nonlinear_fit(x, fun::Function, dflst, a0, eps=1e-8, maxiter=200)
 ```
 where 
- * `x` is a matrix where each column represents on data variable.
+ * `x` is a matrix where each column represents one data variable.
  * `fun` is a function that evaluates the fitting function. This function 
-   has two arguments `x` and `a`, both arrays.
+   has two arguments `x` and `a`, both vectors (for each data variable `x_i` and each parameter `a_k`.
  * `dflst` is a function that calculates the derivatives of the fitting coefficients, 
-  such that `dflst(k, x, a) = d / da_k f(x1, ..., xn, a1, ..., ak, ... ap)`.
- * `a0` Initial guess of the fitting coefficients.
+  such that `dflst(k, x, a) = d / da_k f(x_1, ..., x_n, a_1, ..., a_k, ... a_p)`.
+ * `a0` Vector containing the initial guess of the fitting coefficients.
  * `eps` convergence criteria.
  * `maxiter` maximum number of iterations to achieve convergence.
 
-File `king.jl` that is an example using the function `nonlinear`.
+File `king.jl` contains an example using the function `nonlinear`.
 
 Numerical derivatives are often enough and function `makeDerivFun` creates
 a function that uses central differences to calculate the derivative.
@@ -98,12 +97,13 @@ implemented in function `king_fit`.
 
 ## Generic interface
 
-When different types of curve fits can be used, a common interface may be used. 
-For each type of curve fitting, a corresponding `type` is defined. The generic function 
-`curve_fit`  performs the curve fitting and the function `apply_fit` uses the object
-returned by `curve_fit` to calculate the approximation.
+When different types of curve fits can be selected, a common interface is an interesting
+ feature. For each type of curve fitting, a corresponding `type` is defined. 
+The generic function `curve_fit`  performs the curve fitting and the 
+function `apply_fit` uses the object returned by `curve_fit` to calculate 
+the approximation.
 
-The following types are defined in this package:
+The following fitting types are defined in this package:
  * `LinearFit`
  * `LogFit`
  * `PowerFit`
@@ -131,7 +131,7 @@ plot(U, E, "o", U1, e, "r-", U2, e, "g-", linewidth=3)
 
 ## StatsBase abstractions for statistical models
 
-Module `StatsBase` provides a few generic functions. For now I only implement
+Module `StatsBase` provides a few generic functions. For now,  I have only implemented
 methods for functions `fit`, which is basically an alias for `curve_fit` and 
 the method `coef` which returns the fitting coefficients. I will try later to 
 implement the other methods.
