@@ -76,10 +76,10 @@ fit{T<:LeastSquares}(::Type{T}, x, y) = T(x, y)
 fit{T<:LeastSquares}(::Type{T}, x, y, args...) = T(x, y, args...)
 coef{T<:LeastSquares}(f::T) = f.coefs
 
-apply_fit(f::LinearFit, x) = f.coefs[1] + f.coefs[2]*x
+apply_fit(f::LinearFit, x) = f.coefs[1] .+ f.coefs[2].*x
 apply_fit(f::PowerFit, x) = f.coefs[1] .* x .^ f.coefs[2]
-apply_fit(f::LogFit, x) = f.coefs[1] + f.coefs[2] * log(x)
-apply_fit(f::ExpFit, x) = f.coefs[1] .* exp(f.coefs[2] * x)
+apply_fit(f::LogFit, x) = f.coefs[1] .+ f.coefs[2] .* log(x)
+apply_fit(f::ExpFit, x) = f.coefs[1] .* exp(f.coefs[2] .* x)
 
 
 function apply_fit(f::PolyFit, x)

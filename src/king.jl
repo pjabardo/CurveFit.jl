@@ -31,8 +31,9 @@ function king_fit(E, U, eps=1e-8, maxiter=200)
     a0 = [f[1], f[2], 0.5]
     #a0 = [1.0, 1.0, 0.4]
 
-    nonlinear_fit(hcat(E,U), kingfun, deriv_kingfun, a0, eps, maxiter)
-
+    coefs, converged, niter = nonlinear_fit(hcat(E,U), kingfun, deriv_kingfun,
+                                            a0, eps, maxiter)
+    return coefs
 end
 
 type KingFit <: LeastSquares

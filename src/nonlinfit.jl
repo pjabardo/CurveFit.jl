@@ -15,6 +15,7 @@ function nonlinear_fit(x, fun::Function, dflst, a0, eps=1e-8, maxiter=200)
     
     A = zeros(Float64, np, na)
     r = zeros(Float64, np)
+    iter = 1
     convergence = false
     for iter = 1:maxiter
         for p = 1:np
@@ -26,15 +27,13 @@ function nonlinear_fit(x, fun::Function, dflst, a0, eps=1e-8, maxiter=200)
         end
         da = least_squares(A, r)
         a0 = a0 + da
-        if max(abs(da/aref)) < eps
+        if maximum(abs(da/aref)) < eps
             convergence = true
             break
         end
     end
-    if !convergence
-        println("NAO CONVERGIU")
-    end
-    return a0
+
+    return a0, convergence, iter
 end
 
 
