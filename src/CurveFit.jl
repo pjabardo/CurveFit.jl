@@ -9,9 +9,8 @@ export LinearKingFit, KingFit
 export fit, coef
 
 # package code goes here
-abstract Approx
-abstract LeastSquares <: Approx
-import StatsBase.fit, StatsBase.predict, StatsBase.coef
+abstract ApproxFit
+abstract LeastSquares <: ApproxFit
 
 
 include("linfit.jl")

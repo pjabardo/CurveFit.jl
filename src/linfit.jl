@@ -1,8 +1,10 @@
-    
+
+using Polynomials
+
 least_squares{T<:Number}(A::StridedVecOrMat{T}, y::Vector{T}) = A \ y
 
 
-linear_fit(x, y) = least_squares(hcat(ones(length(x)), x), y)
+linear_fit(x, y) = least_squares(hcat(ones(x), x), y)
 
 
 log_fit(x, y) = linear_fit(log(x), y)
@@ -26,7 +28,7 @@ function poly_fit(x, y, n)
             A[k,i+1] = A[k,i] * x[k]
         end
     end
-    least_squares(A,y)
+    Poly(least_squares(A,y))
 end
 
 
@@ -34,61 +36,50 @@ end
 
 
 
-type LinearFit <: LeastSquares
-    coefs::Array{Float64,1}
+type LinearFit{T} <: LeastSquares
+    coefs::Array{T,1}
     LinearFit(coefs) = new(copy(coefs))
 end
-LinearFit(x, y) = LinearFit(linear_fit(x, y))
+LinearFit{T}(x::AbstractVector{T}, y::AbstractVector{T}) = LinearFit{T}(linear_fit(x, y))
 
-type PolyFit <: LeastSquares
-    coefs::Array{Float64,1}
-    degree::Int
-    PolyFit(coefs) = new(copy(coefs), length(coefs)-1)
-end
 
-PolyFit(x, y, n) = PolyFit(poly_fit(x, y, n))
 
-type LogFit <: LeastSquares
-    coefs::Array{Float64,1}
+type LogFit{T} <: LeastSquares
+    coefs::Array{T,1}
     LogFit(coefs) = new(copy(coefs))
 end
-LogFit(x, y) = LogFit(log_fit(x, y))
+LogFit{T}(x::AbstractVector{T}, y::AbstractVector{T}) = LogFit{T}(log_fit(x, y))
 
-type PowerFit <: LeastSquares
-    coefs::Array{Float64,1}
+type PowerFit{T} <: LeastSquares
+    coefs::Array{T,1}
     PowerFit(coefs) = new(copy(coefs))
 end
-PowerFit(x, y) = PowerFit(power_fit(x, y))
+PowerFit{T}(x::AbstractVector{T}, y::AbstractVector{T}) = PowerFit{T}(power_fit(x, y))
 
-type ExpFit <: LeastSquares
-    coefs::Array{Float64,1}
+type ExpFit{T} <: LeastSquares
+    coefs::Array{T,1}
     ExpFit(coefs) = new(copy(coefs))
 end
-ExpFit(x, y) = ExpFit(exp_fit(x, y))
+ExpFit{T}(x::AbstractVector{T}, y::AbstractVector{T}) = ExpFit{T}(exp_fit(x, y))
 
 
 
 
-curve_fit{T}(::Type{T}, x, y) = T(x, y)
-curve_fit{T}(::Type{T}, x, y, args...) = T(x, y, args...)
+curve_fit{T<:LeastSquares}(::Type{T}, x, y) = T(x, y)
+curve_fit{T<:LeastSquares}(::Type{T}, x, y, args...) = T(x, y, args...)
+curve_fit(::Type{Poly}, x, y, n) = poly_fit(x, y, n)
+curve_fit(::Type{Poly}, x, y) = poly_fit(x, y, 1)
 
-fit{T<:LeastSquares}(::Type{T}, x, y) = T(x, y)
-fit{T<:LeastSquares}(::Type{T}, x, y, args...) = T(x, y, args...)
-coef{T<:LeastSquares}(f::T) = f.coefs
 
 apply_fit(f::LinearFit, x) = f.coefs[1] .+ f.coefs[2].*x
 apply_fit(f::PowerFit, x) = f.coefs[1] .* x .^ f.coefs[2]
 apply_fit(f::LogFit, x) = f.coefs[1] .+ f.coefs[2] .* log(x)
 apply_fit(f::ExpFit, x) = f.coefs[1] .* exp(f.coefs[2] .* x)
 
+apply_fit(f::Poly, x) = polyval(f, x)
 
-function apply_fit(f::PolyFit, x)
-    a = f.coefs
-    n = f.degree+1
-    y = a[n] .+ 0.0.*x
-    for i = (n-1):-1:1
-        y = (a[i] .+ x .* y)
-    end
-    return y
-end
+import Base.call
+
+call{T<:LeastSquares}(f::T, x) = apply_fit(f, x)
+
 
