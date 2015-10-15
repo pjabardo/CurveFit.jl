@@ -28,6 +28,7 @@ The fitting algorithms include
 
 """
 module CurveFit
+using Polynomials
 
 export linear_fit, log_fit, power_fit, exp_fit, poly_fit
 export LinearFit, PolyFit, LogFit, PowerFit, ExpFit
@@ -36,6 +37,7 @@ export nonlinear_fit
 export linear_king_fit, king_fit
 export LinearKingFit, KingFit
 export fit, coef
+export linear_rational_fit, RationalPoly, ratval, rational_fit
 
 # package code goes here
 "Abstract base class for fitting data"
