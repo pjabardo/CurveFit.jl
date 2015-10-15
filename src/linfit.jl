@@ -1,9 +1,10 @@
 
-
-"Verbose interface to doing least squares (using linear algebra)"
-least_squares{T<:Number}(A::StridedVecOrMat{T}, y::Vector{T}) = A \ y
+using Polynomials
 
 
+
+"Fits a straight line through a set of points, `y = a₁ + a₂ * x`"
+linear_fit(x, y) = hcat(ones(x), x) \ y
 
 "Fits a log function through a set of points: `y = a₁+ a₂*log(x)`"
 log_fit(x, y) = linear_fit(log(x), y)
@@ -39,7 +40,7 @@ function poly_fit(x, y, n)
             A[k,i+1] = A[k,i] * x[k]
         end
     end
-    Poly(least_squares(A,y))
+    Poly(A\y)
 end
 
 
@@ -122,5 +123,5 @@ apply_fit(f::Poly, x) = polyval(f, x)
 import Base.call
 
 call{T<:LeastSquares}(f::T, x) = apply_fit(f, x)
-#call(p::Poly, x) = polyval(p, x)
+call(p::Poly, x) = polyval(p, x)
 

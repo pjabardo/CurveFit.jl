@@ -1,6 +1,6 @@
 using CurveFit
 using Base.Test  
-
+using Polynomials
 # write your own tests here
 @test 1 == 1
 
@@ -9,7 +9,7 @@ using Base.Test
 x = [linspace(1,10,10);]
 fun(x) = 1.0 + 2.0.*x
 y = fun(x)
-f = linear_fit(x, y1)
+f = linear_fit(x, y)
 
 @test_approx_eq_eps f[1] 1.0 1e-7
 @test_approx_eq_eps f[2] 2.0 1e-7
@@ -55,4 +55,47 @@ f = poly_fit(x, y, 4)
 @test_approx_eq_eps f[1] 2.0 1e-7
 f = curve_fit(Poly, x, y, 4)
 @test_approx_eq_eps f(1.5) fun(1.5) 1e-7
+
+# King's law
+U = [linspace(1, 20, 20);]
+A = 5.0
+B = 1.5
+n = 0.5
+E = sqrt(A + B*U.^n)
+fun(E) = ((E.^2 - A)/B).^(1./n)
+
+f = linear_king_fit(E, U)
+@test_approx_eq_eps f[1] A 1e-7
+@test_approx_eq_eps f[2] B 1e-7
+f= curve_fit(LinearKingFit, E, U)
+@test_approx_eq_eps f(3.0) fun(3.0) 1e-7
+
+# Modified King's law
+n = 0.42
+
+E = sqrt(A + B*U.^n)
+fun(E) = ((E.^2 - A)/B).^(1./n)
+
+f = king_fit(E, U)
+@test_approx_eq_eps f[1] A 1e-7
+@test_approx_eq_eps f[2] B 1e-7
+@test_approx_eq_eps f[3] n 1e-7
+f= curve_fit(KingFit, E, U)
+@test_approx_eq_eps f(3.0) fun(3.0) 1e-5
+
+
+
+# Linear Rational fit
+fun(x) = RationalPoly{Float64}([1.0, 0.0, -2.0], [1.0, 2.0, 3.0])
+y = fun(y)
+f = linear_rational_fit(x, y, 2, 3)
+@test_approx_eq_eps f[1] 1.0 1e-8
+@test_approx_eq_eps f[2] 0.0 1e-8
+@test_approx_eq_eps f[3] -2.0 1e-8
+@test_approx_eq_eps f[4] 2.0 1e-8
+@test_approx_eq_eps f[5] 3.0 1e-8
+@test_approx_eq_eps f[6] 0.0 1e-8
+
+
+
 

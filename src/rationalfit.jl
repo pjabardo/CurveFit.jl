@@ -21,15 +21,15 @@ function linear_rational_fit{T<:Number}(x::AbstractArray{T}, y::AbstractVector{T
     for i = 1:n
         A[i,1] = one(T)
         for k = 1:p
-            A[i,k+1] = A[i,k]*x[i]
+            A[i,k+1] = x[i]^k
         end
-        A[i, p+2] = -y[i]*x[i]
-        for k = 2:q
-            A[i, p+1+k] = A[i, p+k] * x[i]
+        for k = 1:q
+            A[i, p+1+k] = -y[i] * x[i]^k
         end
     end
 
     A \ y
+#    coefs[1:p+1], [1.0; coefs[p+2:end]]
 
 end
 
@@ -47,7 +47,7 @@ end
 RationalPoly{T<:Number}(p::Integer, q::Integer, ::Type{T}=Float64) = RationalPoly{T}(zeros(T,p+1),
                                                                                   zeros(T,q+1))
 "Evaluate a rational polynomial"
-ratval{T<:Number, S<:Number}(r::RationalPoly{T}, x::S) = polyval(r.num, x) ./ polyval(r.den, x)
+ratval{T<:Number}(r::RationalPoly{T}, x) = polyval(r.num, x) ./ polyval(r.den, x)
 
 "`call` overload for calling directly `ratval`"
 call(r::RationalPoly, x) = ratval(r, x)
@@ -84,7 +84,7 @@ function rational_fit(x, y, p, q, eps=1e-8, maxiter=200)
     coefs, converged, niter = nonlinear_fit(hcat(x, y), fun, coefs0, eps, maxiter)
 
     a = coefs[1:p+1]
-    b = coefs[p+2:end]
+    b = [1.0; coefs[p+2:end]]
     RationalPoly{Float64}(a, b)
 
 end
