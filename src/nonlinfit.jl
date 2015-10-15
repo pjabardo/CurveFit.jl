@@ -1,6 +1,5 @@
 # Nonlinear curve fitting.
 
-using Debug
 
 function nonlinear_fit(x, fun, a0, eps=1e-8, maxiter=200)
 

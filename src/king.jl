@@ -13,25 +13,14 @@ apply_fit(f::LinearKingFit, E) = ( (E.*E .- f.coefs[1]) ./ f.coefs[2] ) .^ 2
 
 
 kingfun(x, a) = a[1] + a[2] * x[2] ^ a[3] - x[1]*x[1]
-function deriv_kingfun(k, x, a)
-    if k == 1
-        return 1.0
-    elseif k == 2
-        return x[2]^a[3]
-    else
-        return a[2] * x[2]^a[3] * log(x[2])
-    end
-end
 
-
-        
+       
 function king_fit(E, U, eps=1e-8, maxiter=200)
 
     f = linear_king_fit(E, U)
     a0 = [f[1], f[2], 0.5]
 
-    coefs, converged, niter = nonlinear_fit(hcat(E,U), kingfun, deriv_kingfun,
-                                            a0, eps, maxiter)
+    coefs, converged, niter = nonlinear_fit(hcat(E,U), kingfun, a0, eps, maxiter)
     return coefs
 end
 
