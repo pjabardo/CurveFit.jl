@@ -15,7 +15,7 @@ The linear case is solved by doing a least square fit on
 
 where the zero order term o `q(x)` is assumed to be 1.
 """
-function linear_rational_fit{T<:Number}(x::AbstractArray{T}, y::AbstractVector{T}, p, q)
+function linear_rational_fit{T<:Number}(x::AbstractVector{T}, y::AbstractVector{T}, p, q)
     n = size(x,1)
     A = zeros(T, n, q+p+1)
     for i = 1:n
