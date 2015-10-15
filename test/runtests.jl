@@ -86,8 +86,8 @@ f= curve_fit(KingFit, E, U)
 
 
 # Linear Rational fit
-fun(x) = RationalPoly{Float64}([1.0, 0.0, -2.0], [1.0, 2.0, 3.0])
-y = fun(y)
+r =  RationalPoly{Float64}([1.0, 0.0, -2.0], [1.0, 2.0, 3.0])
+y = r(x)
 f = linear_rational_fit(x, y, 2, 3)
 @test_approx_eq_eps f[1] 1.0 1e-8
 @test_approx_eq_eps f[2] 0.0 1e-8
@@ -95,6 +95,13 @@ f = linear_rational_fit(x, y, 2, 3)
 @test_approx_eq_eps f[4] 2.0 1e-8
 @test_approx_eq_eps f[5] 3.0 1e-8
 @test_approx_eq_eps f[6] 0.0 1e-8
+
+# Nonlinear Rational fit
+f = rational_fit(x, y, 2, 3)
+
+@test_approx_eq_eps f(1.5) r(1.5) 1e-8
+@test_approx_eq_eps f(4.5) r(4.5) 1e-8
+
 
 
 
