@@ -12,7 +12,6 @@ function nonlinear_fit(x, fun, a0, eps=1e-8, maxiter=200)
             a0[i] = 0.01
         end
     end
-    aref = eps .* abs(a0)
 
     da = a0 / 10
     a1 = zeros(na)
