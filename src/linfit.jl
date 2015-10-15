@@ -36,31 +36,31 @@ end
 
 
 
-type LinearFit{T} <: LeastSquares
+type LinearFit{T<:Number} <: LeastSquares
     coefs::Array{T,1}
     LinearFit(coefs) = new(copy(coefs))
 end
-LinearFit{T}(x::AbstractVector{T}, y::AbstractVector{T}) = LinearFit{T}(linear_fit(x, y))
+LinearFit{T<:Number}(x::AbstractVector{T}, y::AbstractVector{T}) = LinearFit{T}(linear_fit(x, y))
 
 
 
-type LogFit{T} <: LeastSquares
+type LogFit{T<:Number} <: LeastSquares
     coefs::Array{T,1}
     LogFit(coefs) = new(copy(coefs))
 end
-LogFit{T}(x::AbstractVector{T}, y::AbstractVector{T}) = LogFit{T}(log_fit(x, y))
+LogFit{T<:Number}(x::AbstractVector{T}, y::AbstractVector{T}) = LogFit{T}(log_fit(x, y))
 
-type PowerFit{T} <: LeastSquares
+type PowerFit{T<:Number} <: LeastSquares
     coefs::Array{T,1}
     PowerFit(coefs) = new(copy(coefs))
 end
-PowerFit{T}(x::AbstractVector{T}, y::AbstractVector{T}) = PowerFit{T}(power_fit(x, y))
+PowerFit{T<:Number}(x::AbstractVector{T}, y::AbstractVector{T}) = PowerFit{T}(power_fit(x, y))
 
-type ExpFit{T} <: LeastSquares
+type ExpFit{T<:Number} <: LeastSquares
     coefs::Array{T,1}
     ExpFit(coefs) = new(copy(coefs))
 end
-ExpFit{T}(x::AbstractVector{T}, y::AbstractVector{T}) = ExpFit{T}(exp_fit(x, y))
+ExpFit{T<:Number}(x::AbstractVector{T}, y::AbstractVector{T}) = ExpFit{T}(exp_fit(x, y))
 
 
 

@@ -14,6 +14,7 @@ abstract LeastSquares <: ApproxFit
 
 
 include("linfit.jl")
+include("rationalfit.jl")
 include("nonlinfit.jl")
 include("king.jl")
 
