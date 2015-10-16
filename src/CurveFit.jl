@@ -38,6 +38,7 @@ export linear_king_fit, king_fit
 export LinearKingFit, KingFit
 export fit, coef
 export linear_rational_fit, RationalPoly, ratval, rational_fit
+export Poly
 
 # package code goes here
 "Abstract base class for fitting data"
