@@ -88,7 +88,6 @@ The `curve_fit` generic function returns an object that can be use to compute es
 ```julia
 using PyPlot
 using CurveFit
-using Polynomials
 
 x = [linspace(0, 2, 100);]
 y0 = 1 .+ x .+ x.*x .+ randn(100)/10
@@ -128,7 +127,6 @@ implemented in function `king_fit`.
 ```julia
 using PyPlot
 using CurveFit
-using Polynomials
 
 U = [linspace(1, 20, 20);]
 E = sqrt(2 .+ 1 .* U .^ 0.45) + randn(20)/60
