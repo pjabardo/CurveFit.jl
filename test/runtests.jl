@@ -51,8 +51,12 @@ f = curve_fit(ExpFit, x, y)
 fun(x) = 1.0 + 2.0*x + 3.0*x.^2 + 0.5*x.^3
 y = fun(x)
 f = poly_fit(x, y, 4)
-@test_approx_eq_eps f[0] 1.0 1e-7
-@test_approx_eq_eps f[1] 2.0 1e-7
+@test_approx_eq_eps f[1] 1.0 1e-7
+@test_approx_eq_eps f[2] 2.0 1e-7
+@test_approx_eq_eps f[3] 3.0 1e-7
+@test_approx_eq_eps f[4] 0.5 1e-7
+@test_approx_eq_eps f[5] 0.0 1e-7
+
 f = curve_fit(Poly, x, y, 4)
 @test_approx_eq_eps f(1.5) fun(1.5) 1e-7
 
@@ -86,7 +90,7 @@ f= curve_fit(KingFit, E, U)
 
 
 # Linear Rational fit
-r =  RationalPoly{Float64}([1.0, 0.0, -2.0], [1.0, 2.0, 3.0])
+r =  RationalPoly([1.0, 0.0, -2.0], [1.0, 2.0, 3.0])
 y = r(x)
 f = linear_rational_fit(x, y, 2, 3)
 @test_approx_eq_eps f[1] 1.0 1e-8
@@ -99,6 +103,16 @@ f = linear_rational_fit(x, y, 2, 3)
 # Nonlinear Rational fit
 f = rational_fit(x, y, 2, 3)
 
+@test_approx_eq_eps f[1] 1.0 1e-7
+@test_approx_eq_eps f[2] 0.0 1e-7
+@test_approx_eq_eps f[3] -2.0 1e-7
+@test_approx_eq_eps f[4] 2.0 1e-7
+@test_approx_eq_eps f[5] 3.0 1e-7
+@test_approx_eq_eps f[6] 0.0 1e-7
+
+
+
+f = curve_fit(RationalPoly, x, y, 2, 3)
 @test_approx_eq_eps f(1.5) r(1.5) 1e-8
 @test_approx_eq_eps f(4.5) r(4.5) 1e-8
 

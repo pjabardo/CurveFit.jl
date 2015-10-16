@@ -42,10 +42,11 @@ and it is often useful in approximating functions.
 immutable RationalPoly{T<:Number} <: LeastSquares
     num::Poly{T}
     den::Poly{T}
-    RationalPoly(a::AbstractVector{T}, b::AbstractVector{T}) = new(Poly(a), Poly(b))
 end
-RationalPoly{T<:Number}(p::Integer, q::Integer, ::Type{T}=Float64) = RationalPoly{T}(zeros(T,p+1),
-                                                                                  zeros(T,q+1))
+RationalPoly{T<:Number}(a::AbstractVector{T}, b::AbstractVector{T}) = RationalPoly(Poly(a), Poly(b))
+RationalPoly{T<:Number}(p::Integer, q::Integer, ::Type{T}=Float64) = RationalPoly{T}(Poly(zeros(T,p+1)), Poly(zeros(T,q+1)))
+RationalPoly{T<:Number}(coefs::AbstractVector{T}, p, q) = RationalPoly(coefs[1:p+1],[1.0; coefs[p+2:end]])
+
 "Evaluate a rational polynomial"
 ratval{T<:Number}(r::RationalPoly{T}, x) = polyval(r.num, x) ./ polyval(r.den, x)
 
@@ -82,15 +83,15 @@ function rational_fit(x, y, p, q, eps=1e-8, maxiter=200)
     fun = make_rat_fun(p, q)
 
     coefs, converged, niter = nonlinear_fit(hcat(x, y), fun, coefs0, eps, maxiter)
-
-    a = coefs[1:p+1]
-    b = [1.0; coefs[p+2:end]]
-    RationalPoly{Float64}(a, b)
+    
+    coefs
 
 end
 
 apply_fit(r::RationalPoly, x) = ratval(r, x)
 
-curve_fit(::Type{RationalPoly}, x, y, p, q, eps=1e-8, maxiter=200) =
-    rational_fit(x, y, p, q, eps, maxiter)
+function curve_fit(::Type{RationalPoly}, x, y, p, q, eps=1e-8, maxiter=200)
+    RationalPoly(rational_fit(x, y, p, q, eps, maxiter), p, q)
+end
+    
     

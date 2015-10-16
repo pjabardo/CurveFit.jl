@@ -13,9 +13,9 @@ a[1]*f_1(x) + a[2]*f_2(x) + ... + a[n]*f_n(x)
 ```
 minimizes the squares of the errors in relation to `y[i]`.
 
-The basic function is `least_squares`:
+The basic function is implemented using QR decomposition: `A \ y`:
 ```
-coefs = least_squares(A, y)
+coefs = A \ y
 ```
 where `A[:,i] = f_i(x)`. While usually `x` is a single variable, in general, if several
 independent variables are required, the same procedure can be used, something along the line of: 
@@ -28,16 +28,8 @@ Several typical cases are possible:
  * `exp_fit(x, y)` finds coeficients `a` and `b` for `y[i] = a*exp(b*x[i])`
  * `poly_fit(x, y, n)` finds coeficients `a[k]`  for 
    `y[i] = a[1] + a[2]*x[i] + a[3]*x[i]^2 + a[n+1]*x[i]^n`
-
-### Example
-```
-using PyPlot
-x = linspace(0, 2, 100)
-y0 = 1 .+ x .+ x.*x .+ randn(100)/10
-a = CurveFit.poly_fit(x, y0, 2)
-y0b = a[1] .+ a[2] .* x .+ a[3] .* x.^2 
-plot(x, y0, "o", x, y0b, "r-", linewidth=3)
-```
+ * `linear_king_fit(E, U)`, find coefficients `a` and `b` for `E[i]^2 = a + b*U^0.5`
+ * `linear_rational_fit(x, y, p, q)` finds the coefficients for rational polynomials: `y[i] = (a[1] + a[2]*x[i] + ... + a[p+1]*x[i]^p) / (1 + a[p+1+1]*x[i] + ... + a[p+1+q]*x[i]^q)`
 
 ## Nonlinear least squares
 
@@ -51,25 +43,60 @@ f(x_1, x_2, x_3, ..., x_n, a_1, a_2, ...,  a_p) = 0
 where `xi` are the known data points and `ai` are the coefficients that 
 should be fitted. 
 
-The basic function that implements the nonlinear least squares has the following 
-interface:
-```
-nonlinear_fit(x, fun::Function, dflst, a0, eps=1e-8, maxiter=200)
-```
-where 
- * `x` is a matrix where each column represents one data variable.
- * `fun` is a function that evaluates the fitting function. This function 
-   has two arguments `x` and `a`, both vectors (for each data variable `x_i` and each parameter `a_k`.
- * `dflst` is a function that calculates the derivatives of the fitting coefficients, 
-  such that `dflst(k, x, a) = d / da_k f(x_1, ..., x_n, a_1, ..., a_k, ... a_p)`.
- * `a0` Vector containing the initial guess of the fitting coefficients.
- * `eps` convergence criteria.
- * `maxiter` maximum number of iterations to achieve convergence.
+When the model formula is not linear on the fitting coefficients, a nonlinear algorithm is necessary. This library implements a a Newton-type algorithm that doesn't explicitly need derivatives. This is implemented in the function:
 
-File `king.jl` contains an example using the function `nonlinear`.
+`coefs, converged, iter = nonlinear_fit(x, fun, a0, eps=1e-7, maxiter=200)`
 
-Numerical derivatives are often enough and function `makeDerivFun` creates
-a function that uses central differences to calculate the derivative.
+In this function, `x` is an array where each column represents a different variable of the data set,
+`fun` is a callable that returns the fitting error and should be callable with the following signature:
+
+`residual = fun(x, a)`
+
+where `x` is a vector representing a row of the argument array `x` and `a` is an estimate of the
+fitting coefficients which should all be different from zero (to provide a scale). `eps` and `maxiter`
+are convergence parameters.
+
+The `nonlinear_fit` function is used to implement the following fitting functions.
+
+ * `king_fit(E, U)` find coefficients `a`, `b` and `n` for `E[i]^2 = a + b*U^n`
+ * `rational_fit` Just like `linear_rational_fit` but tries to improve the results using nonlinear least squares (`nonlinear_fit`)
+
+## Generic interface
+
+A generic interface was developed to have a common interface for all curve fitting possibilities and to make it easy to use the results:
+
+`fit = curve_fit(::Type{T}, x, y...)`
+
+where `T` is the curve fitting type.
+
+The following cases are implemented:
+
+ * `curve_fit(LinearFit, x, y)` 
+ * `curve_fit(LogFit, x, y)`
+ * `curve_fit(PowerFit, x, y)`
+ * `curve_fit(ExpFit, x, y)`
+ * `curve_fit(Poly, x, y, n=1)`
+ * `curve_fit(LinearKingFit, E, U)`
+ * `curve_fit(KingFit, E, U)`
+ * `curve_fit(RationalPoly, x, y, p, q)`
+
+The `curve_fit` generic function returns an object that can be use to compute estimates of the model with `apply_fit`. `call` is overloaded so that the object can be used as a function.
+
+
+
+## Example
+```julia
+using PyPlot
+using CurveFit
+using Polynomials
+
+x = [linspace(0, 2, 100);]
+y0 = 1 .+ x .+ x.*x .+ randn(100)/10
+fit = curve_fit(Poly, x, y0, 2)
+y0b = fit(x) 
+plot(x, y0, "o", x, y0b, "r-", linewidth=3)
+```
+
 
 ## King's law
 
@@ -95,47 +122,26 @@ implemented in function `king_fit`.
 
 
 
-## Generic interface
-
-When different types of curve fits can be selected, a common interface is an interesting
- feature. For each type of curve fitting, a corresponding `type` is defined. 
-The generic function `curve_fit`  performs the curve fitting and the 
-function `apply_fit` uses the object returned by `curve_fit` to calculate 
-the approximation.
-
-The following fitting types are defined in this package:
- * `LinearFit`
- * `LogFit`
- * `PowerFit`
- * `PolyFit`
- * `ExpFit`
- * `LinearKingFit`
- * `KingFit`
 
 
 ### Example
-```
+```julia
 using PyPlot
-U = linspace(1, 20, 20)
+using CurveFit
+using Polynomials
+
+U = [linspace(1, 20, 20);]
 E = sqrt(2 .+ 1 .* U .^ 0.45) + randn(20)/60
-e = linspace(minimum(E), maximum(E), 50)
+e = [linspace(minimum(E), maximum(E), 50);]
 
-f1 = CurveFit.curve_fit(KingFit, E, U)
-U1 = CurveFit.apply_fit(f1, e)
+f1 = curve_fit(KingFit, E, U)
+U1 = f1(e)
 
-f2 = CurveFit.curve_fit(PolyFit, E, U, 5)
-U2 = CurveFit.apply_fit(f2, e)
+f2 = curve_fit(Poly, E, U, 5)
+U2 = f2(e)
 
 plot(U, E, "o", U1, e, "r-", U2, e, "g-", linewidth=3)
 ```
-
-## StatsBase abstractions for statistical models
-
-Module `StatsBase` provides a few generic functions. For now,  I have only implemented
-methods for functions `fit`, which is basically an alias for `curve_fit` and 
-the method `coef` which returns the fitting coefficients. I will try later to 
-implement the other methods.
-
 
 
 

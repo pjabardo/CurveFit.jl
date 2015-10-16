@@ -28,19 +28,19 @@ Simple algorithm, doesn't use orthogonal polynomials or any such thing
 and therefore unconditioned matrices are possible. Use it only for low
 degree polynomials. 
 
-This function returns a `Polynomials.Poly` object.
+This function returns a the coefficients of the polynomial.
 """
 function poly_fit(x, y, n)
 
     nx = length(x)
-    A = zeros(Float64, nx, n+1)
+    A = zeros(eltype(x), nx, n+1)
     A[:,1] = 1.0
     for i in 1:n
         for k in 1:nx
             A[k,i+1] = A[k,i] * x[k]
         end
     end
-    Poly(A\y)
+    A\y
 end
 
 
@@ -94,8 +94,7 @@ can be used to estimate the value of the fitting model using function `apply_fit
 """
 curve_fit{T<:LeastSquares}(::Type{T}, x, y) = T(x, y)
 curve_fit{T<:LeastSquares}(::Type{T}, x, y, args...) = T(x, y, args...)
-curve_fit(::Type{Poly}, x, y, n) = poly_fit(x, y, n)
-curve_fit(::Type{Poly}, x, y) = poly_fit(x, y, 1)
+curve_fit(::Type{Poly}, x, y, n=1) = Poly(poly_fit(x, y, n))
 
 
 """
