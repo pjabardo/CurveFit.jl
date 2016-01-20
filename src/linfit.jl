@@ -121,5 +121,5 @@ apply_fit(f::Poly, x) = polyval(f, x)
 import Base.call
 
 call{T<:LeastSquares}(f::T, x) = apply_fit(f, x)
-call(p::Poly, x) = polyval(p, x)
+
 
