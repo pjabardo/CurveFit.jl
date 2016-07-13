@@ -51,7 +51,7 @@ RationalPoly{T<:Number}(coefs::AbstractVector{T}, p, q) = RationalPoly(coefs[1:p
 ratval{T<:Number}(r::RationalPoly{T}, x) = polyval(r.num, x) ./ polyval(r.den, x)
 
 "`call` overload for calling directly `ratval`"
-call(r::RationalPoly, x) = ratval(r, x)
+@compat (r::RationalPoly)(x) = ratval(r, x)
 
 "Auxiliary function used in nonlinear least squares"
 function make_rat_fun(p, q)
