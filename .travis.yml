@@ -1,16 +1,9 @@
-language: cpp
-compiler:
-  - clang
+language: julia
+julia:
+  - 0.4
+  - 0.5
+  - nightly
 notifications:
   email: false
-env:
-  matrix:
-    - JULIAVERSION="juliareleases"
-    - JULIAVERSION="julianightlies"
-before_install:
-  - sudo add-apt-repository ppa:staticfloat/julia-deps -y
-  - sudo add-apt-repository ppa:staticfloat/${JULIAVERSION} -y
-  - sudo apt-get update -qq -y
-  - sudo apt-get install libpcre3-dev julia -y
-script:
-  - julia -e 'Pkg.init(); Pkg.clone(pwd()); Pkg.test("CurveFit")'
+#script: # use the default script which also does a git fetch --unshallow
+#  - julia -e 'Pkg.init(); Pkg.clone(pwd()); Pkg.test("CurveFit")'
