@@ -96,29 +96,13 @@ curve_fit{T<:LeastSquares}(::Type{T}, x, y, args...) = T(x, y, args...)
 curve_fit(::Type{Poly}, x, y, n=1) = Poly(poly_fit(x, y, n))
 
 
-"""
-#Uses the object created by `curve_fit` to estimate values
-
-The `call` method is overloaded so that the fit object can 
-be used as a function:
-
-## Example:
-x = [linspace(1, 10, 10);]
-y = 2*x + 1 + randn(10)
-
-fit = curve_fit(LinearFit, x, y)
-
-y1 = fit(5.1)
-y2 = apply_fit(fit, 5.1)
-"""
-apply_fit(f::LinearFit, x) = f.coefs[1] .+ f.coefs[2].*x
-apply_fit(f::PowerFit, x) = f.coefs[1] .* x .^ f.coefs[2]
-apply_fit(f::LogFit, x) = f.coefs[1] .+ f.coefs[2] .* log(x)
-apply_fit(f::ExpFit, x) = f.coefs[1] .* exp(f.coefs[2] .* x)
-
-apply_fit(f::Poly, x) = polyval(f, x)
-
 import Base.call
 
-@compat (f::T){T<:LeastSquares}(x) = apply_fit(f, x)
+@compat (f::LinearFit)(x) = f.coefs[1] .+ f.coefs[2].*x
+@compat (f::PowerFit)(x) = f.coefs[1] .* x .^ f.coefs[2]
+@compat (f::LogFit)(x) = f.coefs[1] .+ f.coefs[2] .* log(x)
+@compat (f::ExpFit)(x) = f.coefs[1] .* exp(f.coefs[2] .* x)
+
+
+
 

@@ -7,49 +7,49 @@ using Polynomials
 
 # Testing linear fit
 x = [linspace(1,10,10);]
-fun(x) = 1.0 + 2.0.*x
-y = fun(x)
+fun0(x) = 1.0 + 2.0.*x
+y = fun0(x)
 f = linear_fit(x, y)
 
 @test_approx_eq_eps f[1] 1.0 1e-7
 @test_approx_eq_eps f[2] 2.0 1e-7
 
 f = curve_fit(LinearFit, x, y)
-@test_approx_eq_eps f(1.5) fun(1.5) 1e-7
+@test_approx_eq_eps f(1.5) fun0(1.5) 1e-7
 
 # power
-fun(x) = 1.0 + 2.0*log(x)
-y = fun(x)
+fun1(x) = 1.0 + 2.0*log(x)
+y = fun1(x)
 f = log_fit(x, y)
 @test_approx_eq_eps f[1] 1.0 1e-7
 @test_approx_eq_eps f[2] 2.0 1e-7
 f = curve_fit(LogFit, x, y)
-@test_approx_eq_eps f(1.5) fun(1.5) 1e-7
+@test_approx_eq_eps f(1.5) fun1(1.5) 1e-7
 
 
 # log
-fun(x) = 2.0*x.^0.8
-y = fun(x)
+fun2(x) = 2.0*x.^0.8
+y = fun2(x)
 f = power_fit(x, y)
 @test_approx_eq_eps f[1] 2.0 1e-7
 @test_approx_eq_eps f[2] 0.8 1e-7
 f = curve_fit(PowerFit, x, y)
-@test_approx_eq_eps f(1.5) fun(1.5) 1e-7
+@test_approx_eq_eps f(1.5) fun2(1.5) 1e-7
 
 
 # Exp
-fun(x) = 2.0*exp(0.8*x)
-y = fun(x)
+fun3(x) = 2.0*exp(0.8*x)
+y = fun3(x)
 f = exp_fit(x, y)
 @test_approx_eq_eps f[1] 2.0 1e-7
 @test_approx_eq_eps f[2] 0.8 1e-7
 f = curve_fit(ExpFit, x, y)
-@test_approx_eq_eps f(1.5) fun(1.5) 1e-7
+@test_approx_eq_eps f(1.5) fun3(1.5) 1e-7
 
 
 # Poly
-fun(x) = 1.0 + 2.0*x + 3.0*x.^2 + 0.5*x.^3
-y = fun(x)
+fun4(x) = 1.0 + 2.0*x + 3.0*x.^2 + 0.5*x.^3
+y = fun4(x)
 f = poly_fit(x, y, 4)
 @test_approx_eq_eps f[1] 1.0 1e-7
 @test_approx_eq_eps f[2] 2.0 1e-7
@@ -58,7 +58,7 @@ f = poly_fit(x, y, 4)
 @test_approx_eq_eps f[5] 0.0 1e-7
 
 f = curve_fit(Poly, x, y, 4)
-@test_approx_eq_eps f(1.5) fun(1.5) 1e-7
+@test_approx_eq_eps f(1.5) fun4(1.5) 1e-7
 
 # King's law
 U = [linspace(1, 20, 20);]
@@ -66,26 +66,26 @@ A = 5.0
 B = 1.5
 n = 0.5
 E = sqrt(A + B*U.^n)
-fun(E) = ((E.^2 - A)/B).^(1./n)
+fun5(E) = ((E.^2 - A)/B).^(1./n)
 
 f = linear_king_fit(E, U)
 @test_approx_eq_eps f[1] A 1e-7
 @test_approx_eq_eps f[2] B 1e-7
 f= curve_fit(LinearKingFit, E, U)
-@test_approx_eq_eps f(3.0) fun(3.0) 1e-7
+@test_approx_eq_eps f(3.0) fun5(3.0) 1e-7
 
 # Modified King's law
 n = 0.42
 
 E = sqrt(A + B*U.^n)
-fun(E) = ((E.^2 - A)/B).^(1./n)
+fun6(E) = ((E.^2 - A)/B).^(1./n)
 
 f = king_fit(E, U)
 @test_approx_eq_eps f[1] A 1e-7
 @test_approx_eq_eps f[2] B 1e-7
 @test_approx_eq_eps f[3] n 1e-7
 f= curve_fit(KingFit, E, U)
-@test_approx_eq_eps f(3.0) fun(3.0) 1e-5
+@test_approx_eq_eps f(3.0) fun6(3.0) 1e-5
 
 
 

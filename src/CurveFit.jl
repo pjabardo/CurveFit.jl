@@ -54,4 +54,21 @@ include("rationalfit.jl")
 include("nonlinfit.jl")
 include("king.jl")
 
+"""
+#Uses the object created by `curve_fit` to estimate values
+
+The `call` method is overloaded so that the fit object can 
+be used as a function:
+
+## Example:
+x = [linspace(1, 10, 10);]
+y = 2*x + 1 + randn(10)
+
+fit = curve_fit(LinearFit, x, y)
+
+y1 = fit(5.1)
+y2 = apply_fit(fit, 5.1)
+"""
+apply_fit{T<:LeastSquares}(f::T, x) = f(x)
+
 end # module

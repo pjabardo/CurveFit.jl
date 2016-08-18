@@ -18,7 +18,7 @@ immutable LinearKingFit <: LeastSquares
 end
 LinearKingFit(E,U) = LinearKingFit(linear_king_fit(E, U))
 
-apply_fit(f::LinearKingFit, E) = ( (E.*E .- f.coefs[1]) ./ f.coefs[2] ) .^ 2
+@compat (f::LinearKingFit)(E) = ( (E.*E .- f.coefs[1]) ./ f.coefs[2] ) .^ 2
 
 
 "Equation that computes the error of the modified King's law "
@@ -50,7 +50,7 @@ immutable KingFit <: LeastSquares
 end
 KingFit(E,U, eps=1e-8, maxiter=200) = KingFit(king_fit(E, U, eps, maxiter))
 
-apply_fit(f::KingFit, E) = ( (E.*E .- f.coefs[1]) ./ f.coefs[2]) .^ (1./f.coefs[3])
+@compat (f::KingFit)(E) = ( (E.*E .- f.coefs[1]) ./ f.coefs[2]) .^ (1./f.coefs[3])
 
 
 

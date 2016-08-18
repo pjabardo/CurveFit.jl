@@ -88,7 +88,6 @@ function rational_fit(x, y, p, q, eps=1e-8, maxiter=200)
 
 end
 
-apply_fit(r::RationalPoly, x) = ratval(r, x)
 
 function curve_fit(::Type{RationalPoly}, x, y, p, q, eps=1e-8, maxiter=200)
     RationalPoly(rational_fit(x, y, p, q, eps, maxiter), p, q)
