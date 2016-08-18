@@ -120,5 +120,5 @@ apply_fit(f::Poly, x) = polyval(f, x)
 
 import Base.call
 
-@compat (::Type{T}){T<:LeastSquares}(x) = apply_fit(T, x)
+@compat (f::T){T<:LeastSquares}(x) = apply_fit(f, x)
 
