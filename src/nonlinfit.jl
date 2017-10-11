@@ -75,7 +75,7 @@ function nonlinear_fit(x, fun, a0, eps=1e-8, maxiter=200)
         r0[p] = fun(xp, a0)
         r1[p] = fun(xp, a1)
     end
-    maxerr = max(maxabs(r0), maxabs(r1))
+    maxerr = maximum(abs, [maximum(abs, r0), maximum(abs, r1)])
     iter = 1
     convergence = false
     for iter = 1:maxiter
@@ -103,7 +103,7 @@ function nonlinear_fit(x, fun, a0, eps=1e-8, maxiter=200)
             end
             r1[p] = fun(xp, a1)
         end
-        if maxabs(r1) < eps * maxerr
+        if maximum(abs, r1) < eps * maxerr
             convergence = true
             break
         end
