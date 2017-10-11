@@ -15,7 +15,7 @@ The linear case is solved by doing a least square fit on
 
 where the zero order term o `q(x)` is assumed to be 1.
 """
-function linear_rational_fit{T<:Number}(x::AbstractVector{T}, y::AbstractVector{T}, p, q)
+function linear_rational_fit(x::AbstractVector{T}, y::AbstractVector{T}, p, q) where T<:Number
     n = size(x,1)
     A = zeros(T, n, q+p+1)
     for i = 1:n
@@ -39,19 +39,19 @@ end
 A rational polynomial is the ratio of two polynomials
 and it is often useful in approximating functions.
 """
-immutable RationalPoly{T<:Number} <: LeastSquares
+struct RationalPoly{T<:Number} <: LeastSquares
     num::Poly{T}
     den::Poly{T}
 end
-RationalPoly{T<:Number}(a::AbstractVector{T}, b::AbstractVector{T}) = RationalPoly(Poly(a), Poly(b))
-RationalPoly{T<:Number}(p::Integer, q::Integer, ::Type{T}=Float64) = RationalPoly{T}(Poly(zeros(T,p+1)), Poly(zeros(T,q+1)))
-RationalPoly{T<:Number}(coefs::AbstractVector{T}, p, q) = RationalPoly(coefs[1:p+1],[1.0; coefs[p+2:end]])
+RationalPoly(a::AbstractVector{T}, b::AbstractVector{T}) where {T<:Number} = RationalPoly(Poly(a), Poly(b))
+RationalPoly(p::Integer, q::Integer, ::Type{T}=Float64) where {T<:Number} = RationalPoly{T}(Poly(zeros(T,p+1)), Poly(zeros(T,q+1)))
+RationalPoly(coefs::AbstractVector{T}, p, q) where {T<:Number} = RationalPoly(coefs[1:p+1],[1.0; coefs[p+2:end]])
 
 "Evaluate a rational polynomial"
-ratval{T<:Number}(r::RationalPoly{T}, x) = polyval(r.num, x) ./ polyval(r.den, x)
+ratval(r::RationalPoly{T}, x) where {T<:Number} = polyval(r.num, x) ./ polyval(r.den, x)
 
 "`call` overload for calling directly `ratval`"
-@compat (r::RationalPoly)(x) = ratval(r, x)
+(r::RationalPoly)(x) = ratval(r, x)
 
 "Auxiliary function used in nonlinear least squares"
 function make_rat_fun(p, q)

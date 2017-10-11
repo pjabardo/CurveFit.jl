@@ -9,16 +9,16 @@ The law is given by:
 
 This function estimates `A` and `B`.
 """
-linear_king_fit(E, U) = linear_fit(sqrt(U), E .* E)
+linear_king_fit(E, U) = linear_fit(sqrt.(U), E .* E)
 
 "Type that represents a Linear (original) King's law"
-immutable LinearKingFit <: LeastSquares
+struct LinearKingFit <: LeastSquares
     coefs::Array{Float64,1}
     LinearKingFit(coefs) = new(copy(coefs))
 end
 LinearKingFit(E,U) = LinearKingFit(linear_king_fit(E, U))
 
-@compat (f::LinearKingFit)(E) = ( (E.*E .- f.coefs[1]) ./ f.coefs[2] ) .^ 2
+(f::LinearKingFit)(E) = ( (E.*E .- f.coefs[1]) ./ f.coefs[2] ) .^ 2
 
 
 "Equation that computes the error of the modified King's law "
@@ -44,13 +44,13 @@ end
 
 
 "Type that represents the modified King's law "
-immutable KingFit <: LeastSquares
+struct KingFit <: LeastSquares
     coefs::Array{Float64,1}
     KingFit(coefs) = new(copy(coefs))
 end
 KingFit(E,U, eps=1e-8, maxiter=200) = KingFit(king_fit(E, U, eps, maxiter))
 
-@compat (f::KingFit)(E) = ( (E.*E .- f.coefs[1]) ./ f.coefs[2]) .^ (1./f.coefs[3])
+(f::KingFit)(E) = ( (E.*E .- f.coefs[1]) ./ f.coefs[2]) .^ (1./f.coefs[3])
 
 
 

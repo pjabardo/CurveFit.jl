@@ -6,17 +6,17 @@
 linear_fit(x, y) = hcat(ones(x), x) \ y
 
 "Fits a log function through a set of points: `y = a₁+ a₂*log(x)`"
-log_fit(x, y) = linear_fit(log(x), y)
+log_fit(x, y) = linear_fit(log.(x), y)
 
 "Fits a power law through a set of points: `y = a₁*x^a₂`"
 function power_fit(x, y)
-    fit = linear_fit(log(x), log(y))
+    fit = linear_fit(log.(x), log.(y))
     [exp(fit[1]), fit[2]]
 end
 
 "Fits an `exp` through a set of points: `y = a₁*exp(a₂*x)`"
 function exp_fit(x, y)
-    fit = linear_fit(x, log(y))
+    fit = linear_fit(x, log.(y))
     [exp(fit[1]), fit[2]]
 end
 
@@ -49,33 +49,33 @@ end
 """
 High Level interface for fitting straight lines
 """
-immutable LinearFit{T<:Number} <: LeastSquares
+struct LinearFit{T<:Number} <: LeastSquares
     coefs::Array{T,1}
-    LinearFit(coefs) = new(copy(coefs))
+    LinearFit{T}(coefs) where {T<:Number} = new(copy(coefs))
 end
-LinearFit{T<:Number}(x::AbstractVector{T}, y::AbstractVector{T}) = LinearFit{T}(linear_fit(x, y))
+LinearFit(x::AbstractVector{T}, y::AbstractVector{T}) where {T<:Number} = LinearFit{T}(linear_fit(x, y))
 
 
 "High Level interface for fitting log laws"
-immutable LogFit{T<:Number} <: LeastSquares
+struct LogFit{T<:Number} <: LeastSquares
     coefs::Array{T,1}
-    LogFit(coefs) = new(copy(coefs))
+    LogFit{T}(coefs) where {T<:Number} = new(copy(coefs))
 end
-LogFit{T<:Number}(x::AbstractVector{T}, y::AbstractVector{T}) = LogFit{T}(log_fit(x, y))
+LogFit(x::AbstractVector{T}, y::AbstractVector{T}) where {T<:Number} = LogFit{T}(log_fit(x, y))
 
 "High Level interface for fitting power laws"
-immutable PowerFit{T<:Number} <: LeastSquares
+struct PowerFit{T<:Number} <: LeastSquares
     coefs::Array{T,1}
-    PowerFit(coefs) = new(copy(coefs))
+    PowerFit{T}(coefs) where {T<:Number} = new(copy(coefs))
 end
-PowerFit{T<:Number}(x::AbstractVector{T}, y::AbstractVector{T}) = PowerFit{T}(power_fit(x, y))
+PowerFit(x::AbstractVector{T}, y::AbstractVector{T}) where {T<:Number} = PowerFit{T}(power_fit(x, y))
 
 "High Level interface for fitting exp laws"
-immutable ExpFit{T<:Number} <: LeastSquares
+struct ExpFit{T<:Number} <: LeastSquares
     coefs::Array{T,1}
-    ExpFit(coefs) = new(copy(coefs))
+    ExpFit{T}(coefs) where {T<:Number} = new(copy(coefs))
 end
-ExpFit{T<:Number}(x::AbstractVector{T}, y::AbstractVector{T}) = ExpFit{T}(exp_fit(x, y))
+ExpFit(x::AbstractVector{T}, y::AbstractVector{T}) where {T<:Number} = ExpFit{T}(exp_fit(x, y))
 
 
 
@@ -91,18 +91,13 @@ can be used to estimate the value of the fitting model using function `apply_fit
  * `f = curve_fit(LinearFit, x, y)`
  * `f = curve_fit(Poly, x, y, n)`
 """
-curve_fit{T<:LeastSquares}(::Type{T}, x, y) = T(x, y)
-curve_fit{T<:LeastSquares}(::Type{T}, x, y, args...) = T(x, y, args...)
+curve_fit(::Type{T}, x, y) where {T<:LeastSquares} = T(x, y)
+curve_fit(::Type{T}, x, y, args...) where {T<:LeastSquares} = T(x, y, args...)
 curve_fit(::Type{Poly}, x, y, n=1) = Poly(poly_fit(x, y, n))
 
 
-import Base.call
 
-@compat (f::LinearFit)(x) = f.coefs[1] .+ f.coefs[2].*x
-@compat (f::PowerFit)(x) = f.coefs[1] .* x .^ f.coefs[2]
-@compat (f::LogFit)(x) = f.coefs[1] .+ f.coefs[2] .* log(x)
-@compat (f::ExpFit)(x) = f.coefs[1] .* exp(f.coefs[2] .* x)
-
-
-
-
+(f::LinearFit)(x) = f.coefs[1] .+ f.coefs[2].*x
+(f::PowerFit)(x) = f.coefs[1] .* x .^ f.coefs[2]
+(f::LogFit)(x) = f.coefs[1] .+ f.coefs[2] .* log(x)
+(f::ExpFit)(x) = f.coefs[1] .* exp(f.coefs[2] .* x)

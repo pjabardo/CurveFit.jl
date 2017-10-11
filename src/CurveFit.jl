@@ -43,10 +43,10 @@ export Poly
 
 # package code goes here
 "Abstract base class for fitting data"
-abstract ApproxFit
+abstract type ApproxFit end
 
 "Abstract class for least squares fitting of data"
-abstract LeastSquares <: ApproxFit
+abstract type LeastSquares <: ApproxFit end
 
 
 include("linfit.jl")
@@ -69,6 +69,6 @@ fit = curve_fit(LinearFit, x, y)
 y1 = fit(5.1)
 y2 = apply_fit(fit, 5.1)
 """
-apply_fit{T<:LeastSquares}(f::T, x) = f(x)
+apply_fit(f::T, x) where {T<:LeastSquares} = f(x)
 
 end # module
