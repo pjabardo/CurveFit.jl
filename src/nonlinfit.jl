@@ -78,7 +78,8 @@ function nonlinear_fit(x, fun, a0, eps=1e-8, maxiter=200)
     maxerr = maximum(abs, [maximum(abs, r0), maximum(abs, r1)])
     iter = 1
     convergence = false
-    for iter = 1:maxiter
+    for i = 1:maxiter
+        iter = i
         for p = 1:np
             for k = 1:nv
                 xp[k] = x[p,k]
@@ -127,7 +128,8 @@ function nonlinear_fit0(x, fun, dflst, a0, eps=1e-8, maxiter=200)
     r = zeros(Float64, np)
     iter = 1
     convergence = false
-    for iter = 1:maxiter
+    for i = 1:maxiter
+        iter = i
         for p = 1:np
             xp = x[p,:]
             r[p] = -fun(xp, a0)

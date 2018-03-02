@@ -3,7 +3,7 @@
 
 
 "Fits a straight line through a set of points, `y = a₁ + a₂ * x`"
-linear_fit(x, y) = hcat(ones(x), x) \ y
+linear_fit(x, y) = hcat(fill!(similar(x),1), x) \ y
 
 "Fits a log function through a set of points: `y = a₁+ a₂*log(x)`"
 log_fit(x, y) = linear_fit(log.(x), y)
@@ -97,7 +97,7 @@ curve_fit(::Type{Poly}, x, y, n=1) = Poly(poly_fit(x, y, n))
 
 
 
-(f::LinearFit)(x) = f.coefs[1] .+ f.coefs[2].*x
-(f::PowerFit)(x) = f.coefs[1] .* x .^ f.coefs[2]
-(f::LogFit)(x) = f.coefs[1] .+ f.coefs[2] .* log(x)
-(f::ExpFit)(x) = f.coefs[1] .* exp(f.coefs[2] .* x)
+(f::LinearFit)(x) = f.coefs[1] + f.coefs[2] *x
+(f::PowerFit)(x) = f.coefs[1] * x ^ f.coefs[2]
+(f::LogFit)(x) = f.coefs[1] + f.coefs[2] * log(x)
+(f::ExpFit)(x) = f.coefs[1] * exp(f.coefs[2] * x)

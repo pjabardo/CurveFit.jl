@@ -1,14 +1,16 @@
+using Compat
 using CurveFit
-using Base.Test  
+using Compat.Test
+using Compat.LinearAlgebra
 using Polynomials
 # write your own tests here
 @test 1 == 1
 
 
 # Testing linear fit
-x = [linspace(1,10,10);]
-fun0(x) = 1.0 + 2.0.*x
-y = fun0(x)
+x = linspace(1,10,10);
+fun0(x) = 1.0 + 2.0*x
+y = fun0.(x)
 f = linear_fit(x, y)
 
 @test f[1] ≈ 1.0 atol=1.0e-7
@@ -18,8 +20,8 @@ f = curve_fit(LinearFit, x, y)
 @test f(1.5) ≈ fun0(1.5) atol=1.0e-7
 
 # power
-fun1(x) = 1.0 + 2.0*log.(x)
-y = fun1(x)
+fun1(x) = 1.0 + 2.0*log(x)
+y = fun1.(x)
 f = log_fit(x, y)
 @test f[1] ≈ 1.0 atol=1.0e-7
 @test f[2] ≈ 2.0 atol=1.0e-7
@@ -48,8 +50,8 @@ f = curve_fit(ExpFit, x, y)
 
 
 # Poly
-fun4(x) = 1.0 + 2.0*x + 3.0*x.^2 + 0.5*x.^3
-y = fun4(x)
+fun4(x) = 1.0 + 2.0*x + 3.0*x^2 + 0.5*x^3
+y = fun4.(x)
 f = poly_fit(x, y, 4)
 @test f[1] ≈ 1.0 atol=1.0e-7
 @test f[2] ≈ 2.0 atol=1.0e-7
@@ -58,15 +60,15 @@ f = poly_fit(x, y, 4)
 @test f[5] ≈ 0.0 atol=1.0e-7
 
 f = curve_fit(Poly, x, y, 4)
-@test f(1.5) ≈ fun4(1.5) atol=1.0e-7
+@test polyval(f, 1.5) ≈ fun4(1.5) atol=1.0e-7 
 
 # King's law
 U = [linspace(1, 20, 20);]
 A = 5.0
 B = 1.5
 n = 0.5
-E = sqrt.(A + B*U.^n)
-fun5(E) = ((E.^2 - A)/B).^(1./n)
+E = sqrt.(A .+ B*U.^n)
+fun5(E) = ((E.^2 - A)/B).^(1 ./ n)
 
 f = linear_king_fit(E, U)
 @test f[1] ≈ A atol=1.0e-7
@@ -77,8 +79,8 @@ f= curve_fit(LinearKingFit, E, U)
 # Modified King's law
 n = 0.42
 
-E = sqrt.(A + B*U.^n)
-fun6(E) = ((E.^2 - A)/B).^(1./n)
+E = sqrt.(A .+ B.*U.^n)
+fun6(E) = ((E^2 - A)/B)^(1 / n)
 
 f = king_fit(E, U)
 @test f[1] ≈ A atol=1.0e-7

@@ -50,7 +50,7 @@ struct KingFit <: LeastSquares
 end
 KingFit(E,U, eps=1e-8, maxiter=200) = KingFit(king_fit(E, U, eps, maxiter))
 
-(f::KingFit)(E) = ( (E.*E .- f.coefs[1]) ./ f.coefs[2]) .^ (1./f.coefs[3])
+(f::KingFit)(E) = ( (E*E - f.coefs[1]) / f.coefs[2]) ^ (1 / f.coefs[3])
 
 
 
