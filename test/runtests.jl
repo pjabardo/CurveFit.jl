@@ -6,9 +6,15 @@ using Polynomials
 # write your own tests here
 @test 1 == 1
 
+if VERSION < v"0.7-"
+    lspf(start, stop, len) = linspace(start, stop, len)
+else
+    lspf(start, stop, len) = range(start, stop=stop, length=len)
+end
+
 
 # Testing linear fit
-x = linspace(1,10,10);
+x = lspf(1,10,10);
 fun0(x) = 1.0 + 2.0*x
 y = fun0.(x)
 f = linear_fit(x, y)
@@ -63,7 +69,7 @@ f = curve_fit(Poly, x, y, 4)
 @test polyval(f, 1.5) ≈ fun4(1.5) atol=1.0e-7 
 
 # King's law
-U = [linspace(1, 20, 20);]
+U = [lspf(1, 20, 20);]
 A = 5.0
 B = 1.5
 n = 0.5
