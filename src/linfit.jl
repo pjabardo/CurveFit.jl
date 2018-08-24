@@ -33,7 +33,7 @@ function poly_fit(x, y, n)
 
     nx = length(x)
     A = zeros(eltype(x), nx, n+1)
-    A[:,1] = 1.0
+    A[:,1] .= 1.0
     for i in 1:n
         for k in 1:nx
             A[k,i+1] = A[k,i] * x[k]
