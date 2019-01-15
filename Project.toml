@@ -1,4 +1,5 @@
 name = "CurveFit"
+uuid = "63a0bc80-18de-11e9-3fa4-43c76195666c"
 version = "0.1.2"
 
 [deps]
