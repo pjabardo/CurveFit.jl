@@ -89,10 +89,10 @@ The `curve_fit` generic function returns an object that can be use to compute es
 using PyPlot
 using CurveFit
 
-x = [linspace(0, 2, 100);]
-y0 = 1 .+ x .+ x.*x .+ randn(100)/10
+x = 0.0:0.02:2.0
+y0 = @. 1 + x + x*x + randn()/10
 fit = curve_fit(Poly, x, y0, 2)
-y0b = fit(x) 
+y0b = fit.(x) 
 plot(x, y0, "o", x, y0b, "r-", linewidth=3)
 ```
 
@@ -128,15 +128,15 @@ implemented in function `king_fit`.
 using PyPlot
 using CurveFit
 
-U = [linspace(1, 20, 20);]
-E = sqrt(2 .+ 1 .* U .^ 0.45) + randn(20)/60
-e = [linspace(minimum(E), maximum(E), 50);]
+U = 1.0:20.0
+E = @. sqrt(2 + 1 * U ^ 0.45) + randn()/60
+e = range(minimum(E), maximum(E), length=50)
 
 f1 = curve_fit(KingFit, E, U)
-U1 = f1(e)
+U1 = f1.(e)
 
 f2 = curve_fit(Poly, E, U, 5)
-U2 = f2(e)
+U2 = f2.(e)
 
 plot(U, E, "o", U1, e, "r-", U2, e, "g-", linewidth=3)
 ```
