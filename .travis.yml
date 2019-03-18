@@ -1,9 +1,0 @@
-language: julia
-julia:
-  - 0.4
-  - 0.5
-  - nightly
-notifications:
-  email: false
-#script: # use the default script which also does a git fetch --unshallow
-#  - julia -e 'Pkg.init(); Pkg.clone(pwd()); Pkg.test("CurveFit")'
