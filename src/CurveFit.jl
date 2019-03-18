@@ -61,8 +61,8 @@ The `call` method is overloaded so that the fit object can
 be used as a function:
 
 ## Example:
-x = [linspace(1, 10, 10);]
-y = 2*x + 1 + randn(10)
+x = 1.0:10.0
+@. y = 2*x + 1 + randn()
 
 fit = curve_fit(LinearFit, x, y)
 
