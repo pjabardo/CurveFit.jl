@@ -42,10 +42,10 @@ export linear_rational_fit, RationalPoly, ratval, rational_fit
 export Poly
 
 # package code goes here
-"Abstract base class for fitting data"
+#"Abstract base class for fitting data"
 abstract type ApproxFit end
 
-"Abstract class for least squares fitting of data"
+#"Abstract class for least squares fitting of data"
 abstract type LeastSquares <: ApproxFit end
 
 
