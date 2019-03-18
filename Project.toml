@@ -1,7 +1,6 @@
 name = "CurveFit"
-uuid = "978cff62-e2b8-11e8-229c-571aaacc4ba3"
-authors = ["Nicholas Timmons <ngtimmons@gmail.com>"]
-version = "0.1.0"
+uuid = "63a0bc80-18de-11e9-3fa4-43c76195666c"
+version = "0.1.2"
 
 [deps]
 Compat = "34da2185-b29b-5c13-b0c7-acf172513d20"
