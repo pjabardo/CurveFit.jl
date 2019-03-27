@@ -1,4 +1,4 @@
-
+using Compat.LinearAlgebra
 
 
 
@@ -21,6 +21,42 @@ function exp_fit(x, y)
 end
 
 """
+Create Vandermonde matrix for simple polynomial fit
+"""
+function vandermondepoly(x, y, n)
+    m = length(x)
+    A = zeros(eltype(y), m, n+1)
+    A[:,1] .= 1.0
+
+    for i = 1:n
+        for k in 1:m
+            A[k, i+1] = A[k, i] * x[k]
+        end
+    end
+    return A
+end
+
+"""
+    Calculates the coefficients of a linear model using Least Squares
+
+Given a Vandermonde matrix, this function uses the QR factorization to compute the Least Squares
+fit of a linear model. The code probably could be optimized.
+
+"""
+function fit_linear_model(Av, y)
+    m, n = size(Av)
+    F = qr(Av)
+
+    d = (F.Q * Matrix(I, m, n))' * y
+    R = UpperTriangular(F.R)
+
+    coefs = R\d
+
+    return coefs
+   
+end
+
+"""
 Fits a polynomial of degree `n` through a set of points.
 
 Simple algorithm, doesn't use orthogonal polynomials or any such thing 
@@ -31,15 +67,9 @@ This function returns a the coefficients of the polynomial.
 """
 function poly_fit(x, y, n)
 
-    nx = length(x)
-    A = zeros(eltype(x), nx, n+1)
-    A[:,1] .= 1.0
-    for i in 1:n
-        for k in 1:nx
-            A[k,i+1] = A[k,i] * x[k]
-        end
-    end
-    A\y
+    A = vandermondepoly(x, y, n)
+    coefs = fit_linear_model(A, y)
+    return Poly(coefs)
 end
 
 
