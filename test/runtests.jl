@@ -1,7 +1,6 @@
-using Compat
 using CurveFit
-using Compat.Test
-using Compat.LinearAlgebra
+using Test
+using LinearAlgebra
 using Polynomials
 # write your own tests here
 @test 1 == 1
