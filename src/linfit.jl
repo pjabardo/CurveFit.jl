@@ -1,5 +1,3 @@
-using Compat.LinearAlgebra
-
 
 sq(x) = x*x
 

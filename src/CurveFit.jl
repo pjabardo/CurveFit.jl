@@ -29,7 +29,6 @@ The fitting algorithms include
 """
 module CurveFit
 using Polynomials
-using Compat
 
 export linear_fit, log_fit, power_fit, exp_fit, poly_fit
 export LinearFit, LogFit, PowerFit, ExpFit
