@@ -1,4 +1,4 @@
-
+using LinearAlgebra
 sq(x) = x*x
 
 "Fits a straight line through a set of points, `y = a₁ + a₂ * x`"
