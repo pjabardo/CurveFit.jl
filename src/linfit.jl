@@ -69,7 +69,7 @@ function poly_fit(x, y, n)
 
     A = vandermondepoly(x, y, n)
     coefs = fit_linear_model(A, y)
-    return Poly(coefs)
+    return coefs
 end
 
 
