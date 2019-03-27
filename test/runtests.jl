@@ -65,8 +65,21 @@ f = poly_fit(x, y, 4)
 @test f[4] ≈ 0.5 atol=1.0e-7
 @test f[5] ≈ 0.0 atol=1.0e-7
 
+
 f = curve_fit(Poly, x, y, 4)
 @test polyval(f, 1.5) ≈ fun4(1.5) atol=1.0e-7 
+
+# Polynomials with large numbers
+coefs = [80.0, -5e-18, -7e-20, -1e-36]
+P = Poly(coefs)
+x1 = 1e10 * (0:0.1:5)
+y1 = P.(x1)
+P2 = curve_fit(Poly, x1, y1, 3)
+@test coefs[1] ≈ P2.a[1] rtol=1e-5
+@test coefs[2] ≈ P2.a[2] rtol=1e-5
+@test coefs[3] ≈ P2.a[3] rtol=1e-5
+@test coefs[4] ≈ P2.a[4] rtol=1e-5
+
 
 # King's law
 U = [lspf(1, 20, 20);]
