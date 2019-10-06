@@ -43,7 +43,7 @@ f(x_1, x_2, x_3, ..., x_n, a_1, a_2, ...,  a_p) = 0
 where `xi` are the known data points and `ai` are the coefficients that 
 should be fitted. 
 
-When the model formula is not linear on the fitting coefficients, a nonlinear algorithm is necessary. This library implements a a Newton-type algorithm that doesn't explicitly need derivatives. This is implemented in the function:
+When the model formula is not linear on the fitting coefficients, a nonlinear algorithm is necessary. This library implements a Newton-type algorithm that doesn't explicitly need derivatives. This is implemented in the function:
 
 `coefs, converged, iter = nonlinear_fit(x, fun, a0, eps=1e-7, maxiter=200)`
 
