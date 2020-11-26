@@ -2,15 +2,10 @@ using CurveFit
 using Test
 using LinearAlgebra
 using Polynomials
-# write your own tests here
-@test 1 == 1
 
-if VERSION < v"0.7-"
-    lspf(start, stop, len) = linspace(start, stop, len)
-else
-    lspf(start, stop, len) = range(start, stop=stop, length=len)
-end
+lspf(start, stop, len) = range(start, stop=stop, length=len)
 
+@testset "CurveFit.jl" begin
 
 # Testing linear fit
 x = lspf(1,10,10);
@@ -65,19 +60,20 @@ f = poly_fit(x, y, 4)
 @test f[5] ≈ 0.0 atol=1.0e-7
 
 
-f = curve_fit(Poly, x, y, 4)
-@test polyval(f, 1.5) ≈ fun4(1.5) atol=1.0e-7 
+f = curve_fit(Polynomial, x, y, 4)
+@test f(1.5) ≈ fun4(1.5) atol=1.0e-7 
 
 # Polynomials with large numbers
 coefs = [80.0, -5e-18, -7e-20, -1e-36]
-P = Poly(coefs)
+P = Polynomial(coefs)
 x1 = 1e10 * (0:0.1:5)
 y1 = P.(x1)
-P2 = curve_fit(Poly, x1, y1, 3)
-@test coefs[1] ≈ P2.a[1] rtol=1e-5
-@test coefs[2] ≈ P2.a[2] rtol=1e-5
-@test coefs[3] ≈ P2.a[3] rtol=1e-5
-@test coefs[4] ≈ P2.a[4] rtol=1e-5
+P2 = curve_fit(Polynomial, x1, y1, 3)
+c = coeffs(P2)    
+@test coefs[1] ≈ c[1] rtol=1e-5
+@test coefs[2] ≈ c[2] rtol=1e-5
+@test coefs[3] ≈ c[3] rtol=1e-5
+@test coefs[4] ≈ c[4] rtol=1e-5
 
 
 # King's law
@@ -111,7 +107,7 @@ f= curve_fit(KingFit, E, U)
 
 # Linear Rational fit
 r =  RationalPoly([1.0, 0.0, -2.0], [1.0, 2.0, 3.0])
-y = r(x)
+y = r.(x)
 f = linear_rational_fit(x, y, 2, 3)
 @test f[1] ≈ 1.0 atol=1.0e-8
 @test f[2] ≈ 0.0 atol=1.0e-8
@@ -140,3 +136,4 @@ f = curve_fit(RationalPoly, x, y, 2, 3)
 
 
 
+end

@@ -140,11 +140,11 @@ can be used to estimate the value of the fitting model using function `apply_fit
 ## A few examples:
 
  * `f = curve_fit(LinearFit, x, y)`
- * `f = curve_fit(Poly, x, y, n)`
+ * `f = curve_fit(Polynomial, x, y, n)`
 """
 curve_fit(::Type{T}, x, y) where {T<:LeastSquares} = T(x, y)
 curve_fit(::Type{T}, x, y, args...) where {T<:LeastSquares} = T(x, y, args...)
-curve_fit(::Type{Poly}, x, y, n=1) = Poly(poly_fit(x, y, n))
+curve_fit(::Type{Polynomial}, x, y, n=1) = Polynomial(poly_fit(x, y, n))
 
 
 
