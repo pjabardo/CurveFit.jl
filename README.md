@@ -1,5 +1,13 @@
 # CurveFit
 
+[![Build Status](https://github.com/pjabardo/CurveFit.jl/workflows/CI/badge.svg)](https://github.com/pjabardo/CurveFit.jl/actions)
+[![Build Status](https://travis-ci.com/pjabardo/CurveFit.jl.svg?branch=master)](https://travis-ci.com/pjabardo/CurveFit.jl)
+[![Build Status](https://ci.appveyor.com/api/projects/status/github/pjabardo/CurveFit.jl?svg=true)](https://ci.appveyor.com/project/pjabardo/CurveFit-jl)
+[![Coverage](https://codecov.io/gh/pjabardo/CurveFit.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/pjabardo/CurveFit.jl)
+[![Coverage](https://coveralls.io/repos/github/pjabardo/CurveFit.jl/badge.svg?branch=master)](https://coveralls.io/github/pjabardo/CurveFit.jl?branch=master)
+
+
+
 A package that implements a few curve fitting functions.
 
 ## Linear Least squares
