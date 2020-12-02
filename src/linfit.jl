@@ -23,7 +23,7 @@ function linear_fit(x, y)
     a0 = (sx2*sy - sxy*sx) / ( m*sx2 - sx*sx )
     a1 = (m*sxy - sx*sy) / (m*sx2 - sx*sx)
 
-    return [a0, a1]
+    return (a0, a1)
 end
 
 "Fits a log function through a set of points: `y = a₁+ a₂*log(x)`"
@@ -32,13 +32,13 @@ log_fit(x, y) = linear_fit(log.(x), y)
 "Fits a power law through a set of points: `y = a₁*x^a₂`"
 function power_fit(x, y)
     fit = linear_fit(log.(x), log.(y))
-    [exp(fit[1]), fit[2]]
+    (exp(fit[1]), fit[2])
 end
 
 "Fits an `exp` through a set of points: `y = a₁*exp(a₂*x)`"
 function exp_fit(x, y)
     fit = linear_fit(x, log.(y))
-    [exp(fit[1]), fit[2]]
+    (exp(fit[1]), fit[2])
 end
 
 """
@@ -101,30 +101,37 @@ end
 High Level interface for fitting straight lines
 """
 struct LinearFit{T<:Number} <: LeastSquares
-    coefs::Array{T,1}
-    LinearFit{T}(coefs) where {T<:Number} = new(copy(coefs))
+    coefs::NTuple{2,T}
+    LinearFit{T}(coefs) where {T<:Number} = new((coefs[1], coefs[2]))
+    LinearFit{T}(c1, c2) where {T<:Number} = new((c1,c2))
 end
 LinearFit(x::AbstractVector{T}, y::AbstractVector{T}) where {T<:Number} = LinearFit{T}(linear_fit(x, y))
 
 
 "High Level interface for fitting log laws"
 struct LogFit{T<:Number} <: LeastSquares
-    coefs::Array{T,1}
-    LogFit{T}(coefs) where {T<:Number} = new(copy(coefs))
+    coefs::NTuple{2,T}
+    LogFit{T}(coefs) where {T<:Number} = new((coefs[1], coefs[2]))
+    LogFit{T}(c1, c2) where {T<:Number} = new((c1,c2))
+    #LogFit{T}(coefs) where {T<:Number} = new(copy(coefs))
 end
 LogFit(x::AbstractVector{T}, y::AbstractVector{T}) where {T<:Number} = LogFit{T}(log_fit(x, y))
 
 "High Level interface for fitting power laws"
 struct PowerFit{T<:Number} <: LeastSquares
-    coefs::Array{T,1}
-    PowerFit{T}(coefs) where {T<:Number} = new(copy(coefs))
+    coefs::NTuple{2,T}
+    PowerFit{T}(coefs) where {T<:Number} = new((coefs[1], coefs[2]))
+    PowerFit{T}(c1, c2) where {T<:Number} = new((c1,c2))
+    #PowerFit{T}(coefs) where {T<:Number} = new(copy(coefs))
 end
 PowerFit(x::AbstractVector{T}, y::AbstractVector{T}) where {T<:Number} = PowerFit{T}(power_fit(x, y))
 
 "High Level interface for fitting exp laws"
 struct ExpFit{T<:Number} <: LeastSquares
-    coefs::Array{T,1}
-    ExpFit{T}(coefs) where {T<:Number} = new(copy(coefs))
+    coefs::NTuple{2,T}
+    ExpFit{T}(coefs) where {T<:Number} = new((coefs[1], coefs[2]))
+    ExpFit{T}(c1, c2) where {T<:Number} = new((c1,c2))
+    #ExpFit{T}(coefs) where {T<:Number} = new(copy(coefs))
 end
 ExpFit(x::AbstractVector{T}, y::AbstractVector{T}) where {T<:Number} = ExpFit{T}(exp_fit(x, y))
 

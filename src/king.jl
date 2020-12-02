@@ -12,9 +12,10 @@ This function estimates `A` and `B`.
 linear_king_fit(E, U) = linear_fit(sqrt.(U), E .* E)
 
 "Type that represents a Linear (original) King's law"
-struct LinearKingFit <: LeastSquares
-    coefs::Array{Float64,1}
-    LinearKingFit(coefs) = new(copy(coefs))
+struct LinearKingFit{T<:Number} <: LeastSquares
+    coefs::NTuple{2,T} #Array{Float64,1}
+    LinearKingFit(coefs) where {T<:Number} = new{T}((coefs[1], coefs[2])) #copy(coefs))
+    LinearKingFit(A, B) where {T<:Number} = new{T}((A,B))
 end
 LinearKingFit(E,U) = LinearKingFit(linear_king_fit(E, U))
 
@@ -44,9 +45,10 @@ end
 
 
 "Type that represents the modified King's law "
-struct KingFit <: LeastSquares
-    coefs::Array{Float64,1}
-    KingFit(coefs) = new(copy(coefs))
+struct KingFit{T<:Number} <: LeastSquares
+    coefs::NTuple{3,T} #Array{Float64,1}
+    KingFit(coefs) where {T<:Number} = new{T}((coefs[1], coefs[2], coefs[3])) #copy(coefs))
+    KingFit(A, B, n) where {T<:Number} = new{T}((A, B, n)) #copy(coefs))
 end
 KingFit(E,U, eps=1e-8, maxiter=200) = KingFit(king_fit(E, U, eps, maxiter))
 
