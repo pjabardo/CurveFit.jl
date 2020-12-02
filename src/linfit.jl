@@ -100,7 +100,7 @@ end
 """
 High Level interface for fitting straight lines
 """
-struct LinearFit{T<:Number} <: LeastSquares
+struct LinearFit{T<:Number} <: AbstractLeastSquares
     coefs::NTuple{2,T}
     LinearFit{T}(coefs) where {T<:Number} = new((coefs[1], coefs[2]))
     LinearFit{T}(c1, c2) where {T<:Number} = new((c1,c2))
@@ -109,7 +109,7 @@ LinearFit(x::AbstractVector{T}, y::AbstractVector{T}) where {T<:Number} = Linear
 
 
 "High Level interface for fitting log laws"
-struct LogFit{T<:Number} <: LeastSquares
+struct LogFit{T<:Number} <: AbstractLeastSquares
     coefs::NTuple{2,T}
     LogFit{T}(coefs) where {T<:Number} = new((coefs[1], coefs[2]))
     LogFit{T}(c1, c2) where {T<:Number} = new((c1,c2))
@@ -118,7 +118,7 @@ end
 LogFit(x::AbstractVector{T}, y::AbstractVector{T}) where {T<:Number} = LogFit{T}(log_fit(x, y))
 
 "High Level interface for fitting power laws"
-struct PowerFit{T<:Number} <: LeastSquares
+struct PowerFit{T<:Number} <: AbstractLeastSquares
     coefs::NTuple{2,T}
     PowerFit{T}(coefs) where {T<:Number} = new((coefs[1], coefs[2]))
     PowerFit{T}(c1, c2) where {T<:Number} = new((c1,c2))
@@ -127,7 +127,7 @@ end
 PowerFit(x::AbstractVector{T}, y::AbstractVector{T}) where {T<:Number} = PowerFit{T}(power_fit(x, y))
 
 "High Level interface for fitting exp laws"
-struct ExpFit{T<:Number} <: LeastSquares
+struct ExpFit{T<:Number} <: AbstractLeastSquares
     coefs::NTuple{2,T}
     ExpFit{T}(coefs) where {T<:Number} = new((coefs[1], coefs[2]))
     ExpFit{T}(c1, c2) where {T<:Number} = new((c1,c2))
@@ -149,8 +149,8 @@ can be used to estimate the value of the fitting model using function `apply_fit
  * `f = curve_fit(LinearFit, x, y)`
  * `f = curve_fit(Polynomial, x, y, n)`
 """
-curve_fit(::Type{T}, x, y) where {T<:LeastSquares} = T(x, y)
-curve_fit(::Type{T}, x, y, args...) where {T<:LeastSquares} = T(x, y, args...)
+curve_fit(::Type{T}, x, y) where {T<:AbstractLeastSquares} = T(x, y)
+curve_fit(::Type{T}, x, y, args...) where {T<:AbstractLeastSquares} = T(x, y, args...)
 curve_fit(::Type{Polynomial}, x, y, n=1) = Polynomial(poly_fit(x, y, n))
 
 

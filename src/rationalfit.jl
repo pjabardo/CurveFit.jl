@@ -39,7 +39,7 @@ end
 A rational polynomial is the ratio of two polynomials
 and it is often useful in approximating functions.
 """
-struct RationalPoly{T<:Number} <: LeastSquares
+struct RationalPoly{T<:Number} <: AbstractLeastSquares
     num::Polynomial{T}
     den::Polynomial{T}
 end

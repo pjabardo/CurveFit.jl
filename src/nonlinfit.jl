@@ -149,27 +149,136 @@ function nonlinear_fit0(x, fun, dflst, a0, eps=1e-8, maxiter=200)
 end
 
 
-function makeDerivFun(fun, na, da=1e-7)
+function gauss_newton_fit(x::AbstractVector{T}, y::AbstractVector{T}, fun, ∇fun!, a0::AbstractVector{T},
+                          eps=1e-8, maxiter=200) where {T<:Number}
+    P = length(x) # Number of points
+    N = length(a0) # Number of parameters
     
-
-    
-    if length(da)==1
-        da = [da for i in 1:na]
+    xi = zero(T)
+    df = zeros(T, N)
+    a = zeros(T, N)
+    for i in 1:N
+        a[i] = a0[i]
+        if a[i] == 0
+            a[i] = 0.01
+        end
     end
 
-    dfun(k, x, a) = begin
-        a[k] = a[k] + da[k]
-        x1 = fun(x, a)
-        a[k] = a[k] - 2*da[k]
-        x2 = fun(x, a)
-        a[k] = a[k] + da[k]
-        (x1 - x2) / (2*da[k])
+    A = zeros(T, N, N)
+    b = zeros(T, N)
+
+    δref = abs.(a)
+    maxerr = zero(T)
+    for iter = 1:maxiter
+        A .= zero(T)
+        b .= zero(T)
+        for i in 1:P
+            xi = x[i]
+            yi = y[i]
+            f = fun(xi, a) - yi
+            ∇fun!(xi, a, df)
+
+            # Assemble LHS
+            for k in 1:N
+                for j in 1:N
+                    A[j,k] += df[j] * df[k]
+                end
+            end
+            # Assemble RHS
+            for j in 1:N
+                b[j] -= f * df[j]
+            end
+        end
+
+        δ = A\b
+        a .+= δ
+
+        # Verify convergence:
+        maxerr = maximum(abs, δ./δref)
+        if maxerr < eps
+            return(a)
+        end
+        
     end
 
-    return dfun
+    error("gauss_newton_fit failed to converge in $maxiter iterations with relative residual of $maxerr !")
+    
+    return(a)
 end
 
 
+function gauss_newton_generic_fit(x::AbstractMatrix{T}, fun, ∇fun!, a0::AbstractVector{T},
+                          eps=1e-8, maxiter=200) where {T<:Number}
+    P = size(x, 1) # Number of points
+    M = size(x, 2) # Number of columns (variables)
+    N = length(a0) # Number of parameters
+    
+    xi = zeros(T, M)
+    df = zeros(T, N)
+    a = zeros(T, N)
+    for i in 1:N
+        a[i] = a0[i]
+        if a[i] == 0
+            a[i] = 0.01
+        end
+    end
+
+    A = zeros(T, N, N)
+    b = zeros(T, N)
+
+    δref = abs.(a)
+    maxerr = zero(T)
+    for iter = 1:maxiter
+        A .= zero(T)
+        b .= zero(T)
+        for i in 1:P
+            for k in 1:M
+                xi[k] = x[i,k]
+            end
+            f = fun(xi, a)
+            
+            ∇fun!(xi, a, df)
+            # Assemble LHS
+            for k in 1:N
+                for j in 1:N
+                    A[j,k] += df[j] * df[k]
+                end
+            end
+            # Assemble RHS
+            for j in 1:N
+                b[j] -= f * df[j]
+            end
+        end
+
+        δ = A\b
+        a .+= δ
+
+        # Verify convergence:
+        maxerr = maximum(abs, δ./δref)
+        if maxerr < eps
+            return(a)
+        end
+        
+    end
+
+    error("gauss_newton_fit failed to converge in $maxiter iterations with relative residual of $maxerr !")
+    
+    return(a)
+end
+
+myfun0(x, a) = a[1] + a[2]*x[1]^a[3] - x[2]^2
+function mydfun0!(x, a, df)
+    df[1] = 1.0
+    df[2] = x[1]^a[3]
+    df[3] = a[2] * x[1]^a[3] * log(x[1])
+end
+
+myfun1(x, a) = a[1] + a[2]*x[1] + a[3]*x[1]^2 - x[2]
+function mydfun1!(x, a, df)
+    df[1] = 1.0
+    df[2] = x[1]
+    df[3] = x[1]^2
+end
 
 
         
