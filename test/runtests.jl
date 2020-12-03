@@ -238,6 +238,34 @@ f = curve_fit(RationalPoly, x, y, 2, 3)
     @test a[3] ≈ a0[3] rtol=1e-7
     
 
+
+
+
+    # Secant method NLS curve fitting. Linear problem:
+    x = 1.0:10.0
+    a0 = [3.0, 2.0, 1.0]
+    fun(x, a) = a[1] + a[2]*x + a[3]*x^2
+    y = fun.(x, Ref(a0))
     
+    a = CurveFit.secant_nls_fit(x, y, fun, [0.5, 0.5, 0.5], 1e-8, 30)
+    
+    @test a[1] ≈ a0[1] rtol=1e-7
+    @test a[2] ≈ a0[2] rtol=1e-7
+    @test a[3] ≈ a0[3] rtol=1e-7
+
+
+    
+    # Gauss-Newton curve fitting. Nonlinear problem:
+    x = 1.0:10.0
+    fun(x, a) = a[1] + a[2] * x^a[3]
+    a0 = [3.0, 2.0, 0.7]
+    y = fun.(x, Ref(a0))
+    a = CurveFit.secant_nls_fit(x, y, fun, [0.5, 0.5, 0.5], 1e-8, 30)
+    
+    @test a[1] ≈ a0[1] rtol=1e-7
+    @test a[2] ≈ a0[2] rtol=1e-7
+    @test a[3] ≈ a0[3] rtol=1e-7
+    
+
 end
 
