@@ -33,7 +33,7 @@ using Polynomials
 export linear_fit, log_fit, power_fit, exp_fit, poly_fit
 export LinearFit, LogFit, PowerFit, ExpFit
 export curve_fit, apply_fit
-export nonlinear_fit
+export nonlinear_fit,  gauss_newton_fit, gauss_newton_generic_fit
 export linear_king_fit, king_fit
 export LinearKingFit, KingFit
 export fit, coef

@@ -134,6 +134,110 @@ f = curve_fit(RationalPoly, x, y, 2, 3)
 
 
 
+    # Gauss-Newton curve fitting. Linear problem:
+    x = 1.0:10.0
+    a0 = [3.0, 2.0, 1.0]
+    fun(x, a) = a[1] + a[2]*x + a[3]*x^2
+    y = fun.(x, Ref(a0))
+    
+    function ∇fun!(x, a, df) 
+        df[1] = 1.0
+        df[2] = x
+        df[3] = x^2
+    end
+    
+    a = gauss_newton_fit(x, y, fun, ∇fun!, [0.5, 0.5, 0.5], 1e-8, 30)
+    
+    @test a[1] ≈ a0[1] rtol=1e-7
+    @test a[2] ≈ a0[2] rtol=1e-7
+    @test a[3] ≈ a0[3] rtol=1e-7
 
 
+    
+    # Gauss-Newton curve fitting. Nonlinear problem:
+    x = 1.0:10.0
+    fun(x, a) = a[1] + a[2] * x^a[3]
+    a0 = [3.0, 2.0, 0.7]
+    y = fun.(x, Ref(a0))
+    function ∇fun!(x, a, df)
+        df[1] = 1.0
+        df[2] = x^a[3]
+        df[3] = a[2] * x^a[3] * log(x)
+    end
+    a = gauss_newton_fit(x, y, fun, ∇fun!, [0.5, 0.5, 0.5], 1e-8, 30)
+    
+    @test a[1] ≈ a0[1] rtol=1e-7
+    @test a[2] ≈ a0[2] rtol=1e-7
+    @test a[3] ≈ a0[3] rtol=1e-7
+    
+
+
+    # Gauss-Newton curve fitting (generic interface). Linear problem:
+    x = 1.0:10.0
+    a0 = [3.0, 2.0, 1.0]
+    fun(x, a) = a[1] + a[2]*x[1] + a[3]*x[1]^2 - x[2]
+    P = length(x)
+    X = zeros(P, 2)
+    for i in 1:P
+        X[i,1] = x[i]
+        X[i,2] = a0[1] + a0[2]*x[i] + a0[3]*x[i]^2
+    end
+    
+    function ∇fun!(x, a, df) 
+        df[1] = 1.0
+        df[2] = x[1]
+        df[3] = x[1]^2
+    end
+    
+    a = gauss_newton_generic_fit(X, fun, ∇fun!, [0.5, 0.5, 0.5], 1e-8, 30)
+    
+    @test a[1] ≈ a0[1] rtol=1e-7
+    @test a[2] ≈ a0[2] rtol=1e-7
+    @test a[3] ≈ a0[3] rtol=1e-7
+
+
+    
+    # Gauss-Newton curve fitting (generic interface). Nonlinear problem:
+    x = 1.0:10.0
+    fun(x, a) = a[1] + a[2] * x[1]^a[3] - x[2]
+    a0 = [3.0, 2.0, 0.7]
+    P = length(x)
+    X = zeros(P, 2)
+    for i in 1:P
+        X[i,1] = x[i]
+        X[i,2] = a0[1] + a0[2]*x[i]^a0[3]
+    end
+    function ∇fun!(x, a, df)
+        df[1] = 1.0
+        df[2] = x[1]^a[3]
+        df[3] = a[2] * x[1]^a[3] * log(x[1])
+    end
+    a = gauss_newton_generic_fit(X, fun, ∇fun!, [0.5, 0.5, 0.5], 1e-8, 30)
+    
+    @test a[1] ≈ a0[1] rtol=1e-7
+    @test a[2] ≈ a0[2] rtol=1e-7
+    @test a[3] ≈ a0[3] rtol=1e-7
+
+    # Gauss-Newton curve fitting (generic interface). Nonlinear problem:
+    U = 0.5:0.5:10
+    a0 = [2.0, 1.0, 0.35]
+    E = @. sqrt(a0[1] + a0[2]*U^a0[3])
+    
+    X = hcat(E, U)
+    fun(x, a) = a[1] + a[2]*x[2]^a[3] - x[1]^2
+    function ∇fun!(x, a, df)
+        df[1] = 1.0
+        df[2] = x[2]^a[3]
+        df[3] = a[2]*x[2]^a[3] * log(x[2])
+    end
+    
+    a = gauss_newton_generic_fit(X, fun, ∇fun!, [0.5, 0.5, 0.5], 1e-8, 30)
+    
+    @test a[1] ≈ a0[1] rtol=1e-7
+    @test a[2] ≈ a0[2] rtol=1e-7
+    @test a[3] ≈ a0[3] rtol=1e-7
+    
+
+    
 end
+
