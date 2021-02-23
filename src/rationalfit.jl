@@ -28,7 +28,7 @@ function linear_rational_fit(x::AbstractVector{T}, y::AbstractVector{T}, p, q) w
         end
     end
 
-    A \ y
+    fit_linear_model(A, y)
 #    coefs[1:p+1], [1.0; coefs[p+2:end]]
 
 end
