@@ -131,22 +131,22 @@ f = rational_fit(x, y, 2, 3)
 f = curve_fit(RationalPoly, x, y, 2, 3)
 @test f(1.5) ≈ r(1.5) atol=1.0e-8
 @test f(4.5) ≈ r(4.5) atol=1.0e-8
-
+    
 
 
     # Gauss-Newton curve fitting. Linear problem:
     x = 1.0:10.0
     a0 = [3.0, 2.0, 1.0]
-    fun(x, a) = a[1] + a[2]*x + a[3]*x^2
-    y = fun.(x, Ref(a0))
+    fun7(x, a) = a[1] + a[2]*x + a[3]*x^2
+    y = fun7.(x, Ref(a0))
     
-    function ∇fun!(x, a, df) 
+    function ∇fun7!(x, a, df) 
         df[1] = 1.0
         df[2] = x
         df[3] = x^2
     end
     
-    a = gauss_newton_fit(x, y, fun, ∇fun!, [0.5, 0.5, 0.5], 1e-8, 30)
+    a = gauss_newton_fit(x, y, fun7, ∇fun7!, [0.5, 0.5, 0.5], 1e-8, 30)
     
     @test a[1] ≈ a0[1] rtol=1e-7
     @test a[2] ≈ a0[2] rtol=1e-7
@@ -156,15 +156,15 @@ f = curve_fit(RationalPoly, x, y, 2, 3)
     
     # Gauss-Newton curve fitting. Nonlinear problem:
     x = 1.0:10.0
-    fun(x, a) = a[1] + a[2] * x^a[3]
+    fun8(x, a) = a[1] + a[2] * x^a[3]
     a0 = [3.0, 2.0, 0.7]
-    y = fun.(x, Ref(a0))
-    function ∇fun!(x, a, df)
+    y = fun8.(x, Ref(a0))
+    function ∇fun8!(x, a, df)
         df[1] = 1.0
         df[2] = x^a[3]
         df[3] = a[2] * x^a[3] * log(x)
     end
-    a = gauss_newton_fit(x, y, fun, ∇fun!, [0.5, 0.5, 0.5], 1e-8, 30)
+    a = gauss_newton_fit(x, y, fun8, ∇fun8!, [0.5, 0.5, 0.5], 1e-8, 30)
     
     @test a[1] ≈ a0[1] rtol=1e-7
     @test a[2] ≈ a0[2] rtol=1e-7
@@ -175,7 +175,7 @@ f = curve_fit(RationalPoly, x, y, 2, 3)
     # Gauss-Newton curve fitting (generic interface). Linear problem:
     x = 1.0:10.0
     a0 = [3.0, 2.0, 1.0]
-    fun(x, a) = a[1] + a[2]*x[1] + a[3]*x[1]^2 - x[2]
+    fun9(x, a) = a[1] + a[2]*x[1] + a[3]*x[1]^2 - x[2]
     P = length(x)
     X = zeros(P, 2)
     for i in 1:P
@@ -183,13 +183,13 @@ f = curve_fit(RationalPoly, x, y, 2, 3)
         X[i,2] = a0[1] + a0[2]*x[i] + a0[3]*x[i]^2
     end
     
-    function ∇fun!(x, a, df) 
+    function ∇fun9!(x, a, df) 
         df[1] = 1.0
         df[2] = x[1]
         df[3] = x[1]^2
     end
     
-    a = gauss_newton_generic_fit(X, fun, ∇fun!, [0.5, 0.5, 0.5], 1e-8, 30)
+    a = gauss_newton_generic_fit(X, fun9, ∇fun9!, [0.5, 0.5, 0.5], 1e-8, 30)
     
     @test a[1] ≈ a0[1] rtol=1e-7
     @test a[2] ≈ a0[2] rtol=1e-7
@@ -199,7 +199,7 @@ f = curve_fit(RationalPoly, x, y, 2, 3)
     
     # Gauss-Newton curve fitting (generic interface). Nonlinear problem:
     x = 1.0:10.0
-    fun(x, a) = a[1] + a[2] * x[1]^a[3] - x[2]
+    funA(x, a) = a[1] + a[2] * x[1]^a[3] - x[2]
     a0 = [3.0, 2.0, 0.7]
     P = length(x)
     X = zeros(P, 2)
@@ -207,12 +207,12 @@ f = curve_fit(RationalPoly, x, y, 2, 3)
         X[i,1] = x[i]
         X[i,2] = a0[1] + a0[2]*x[i]^a0[3]
     end
-    function ∇fun!(x, a, df)
+    function ∇funA!(x, a, df)
         df[1] = 1.0
         df[2] = x[1]^a[3]
         df[3] = a[2] * x[1]^a[3] * log(x[1])
     end
-    a = gauss_newton_generic_fit(X, fun, ∇fun!, [0.5, 0.5, 0.5], 1e-8, 30)
+    a = gauss_newton_generic_fit(X, funA, ∇funA!, [0.5, 0.5, 0.5], 1e-8, 30)
     
     @test a[1] ≈ a0[1] rtol=1e-7
     @test a[2] ≈ a0[2] rtol=1e-7
@@ -224,14 +224,14 @@ f = curve_fit(RationalPoly, x, y, 2, 3)
     E = @. sqrt(a0[1] + a0[2]*U^a0[3])
     
     X = hcat(E, U)
-    fun(x, a) = a[1] + a[2]*x[2]^a[3] - x[1]^2
-    function ∇fun!(x, a, df)
+    funB(x, a) = a[1] + a[2]*x[2]^a[3] - x[1]^2
+    function ∇funB!(x, a, df)
         df[1] = 1.0
         df[2] = x[2]^a[3]
         df[3] = a[2]*x[2]^a[3] * log(x[2])
     end
     
-    a = gauss_newton_generic_fit(X, fun, ∇fun!, [0.5, 0.5, 0.5], 1e-8, 30)
+    a = gauss_newton_generic_fit(X, funB, ∇funB!, [0.5, 0.5, 0.5], 1e-8, 30)
     
     @test a[1] ≈ a0[1] rtol=1e-7
     @test a[2] ≈ a0[2] rtol=1e-7
@@ -244,10 +244,10 @@ f = curve_fit(RationalPoly, x, y, 2, 3)
     # Secant method NLS curve fitting. Linear problem:
     x = 1.0:10.0
     a0 = [3.0, 2.0, 1.0]
-    fun(x, a) = a[1] + a[2]*x + a[3]*x^2
-    y = fun.(x, Ref(a0))
+    funC(x, a) = a[1] + a[2]*x + a[3]*x^2
+    y = funC.(x, Ref(a0))
     
-    a = CurveFit.secant_nls_fit(x, y, fun, [0.5, 0.5, 0.5], 1e-8, 30)
+    a = CurveFit.secant_nls_fit(x, y, funC, [0.5, 0.5, 0.5], 1e-8, 30)
     
     @test a[1] ≈ a0[1] rtol=1e-7
     @test a[2] ≈ a0[2] rtol=1e-7
@@ -257,10 +257,10 @@ f = curve_fit(RationalPoly, x, y, 2, 3)
     
     # Gauss-Newton curve fitting. Nonlinear problem:
     x = 1.0:10.0
-    fun(x, a) = a[1] + a[2] * x^a[3]
+    funD(x, a) = a[1] + a[2] * x^a[3]
     a0 = [3.0, 2.0, 0.7]
-    y = fun.(x, Ref(a0))
-    a = CurveFit.secant_nls_fit(x, y, fun, [0.5, 0.5, 0.5], 1e-8, 30)
+    y = funD.(x, Ref(a0))
+    a = CurveFit.secant_nls_fit(x, y, funD, [0.5, 0.5, 0.5], 1e-8, 30)
     
     @test a[1] ≈ a0[1] rtol=1e-7
     @test a[2] ≈ a0[2] rtol=1e-7
