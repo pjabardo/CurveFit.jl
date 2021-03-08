@@ -83,7 +83,7 @@ The following cases are implemented:
  * `curve_fit(LogFit, x, y)`
  * `curve_fit(PowerFit, x, y)`
  * `curve_fit(ExpFit, x, y)`
- * `curve_fit(Poly, x, y, n=1)`
+ * `curve_fit(Polynomial, x, y, n=1)`
  * `curve_fit(LinearKingFit, E, U)`
  * `curve_fit(KingFit, E, U)`
  * `curve_fit(RationalPoly, x, y, p, q)`
@@ -99,7 +99,7 @@ using CurveFit
 
 x = 0.0:0.02:2.0
 y0 = @. 1 + x + x*x + randn()/10
-fit = curve_fit(Poly, x, y0, 2)
+fit = curve_fit(Polynomial, x, y0, 2)
 y0b = fit.(x) 
 plot(x, y0, "o", x, y0b, "r-", linewidth=3)
 ```
@@ -143,7 +143,7 @@ e = range(minimum(E), maximum(E), length=50)
 f1 = curve_fit(KingFit, E, U)
 U1 = f1.(e)
 
-f2 = curve_fit(Poly, E, U, 5)
+f2 = curve_fit(Polynomial, E, U, 5)
 U2 = f2.(e)
 
 plot(U, E, "o", U1, e, "r-", U2, e, "g-", linewidth=3)
