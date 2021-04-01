@@ -10,8 +10,8 @@ function linear_fit(x, y)
 
     m = length(x)
 
-    sx2 = zero(sx)
-    sy2 = zero(sy)
+    sx2 = zero(sx.*sx)
+    sy2 = zero(sy.*sy)
     sxy = zero(sx*sy)
 
     for i = 1:m
