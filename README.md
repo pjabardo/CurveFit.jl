@@ -30,11 +30,12 @@ independent variables are required, the same procedure can be used, something al
 `A[:,i] = f_i(x1, x2, ..., xn)`.
 
 Several typical cases are possible:
- * `linear_fit(x, y)` finds coeficients `a` and `b` for `y[i] = a + b*x[i]`
- * `power_fit(x, y)` finds coeficients `a` and `b` for `y[i] = a *x[i]^b`
- * `log_fit(x, y)` finds coeficients `a` and `b` for `y[i] = a + b*log(x[i])`
- * `exp_fit(x, y)` finds coeficients `a` and `b` for `y[i] = a*exp(b*x[i])`
- * `poly_fit(x, y, n)` finds coeficients `a[k]`  for 
+ * `linear_fit(x, y)` finds coefficients `a` and `b` for `y[i] = a + b*x[i]`
+ * `power_fit(x, y)` finds coefficients `a` and `b` for `y[i] = a *x[i]^b`
+ * `log_fit(x, y)` finds coefficients `a` and `b` for `y[i] = a + b*log(x[i])`
+ * `exp_fit(x, y)` finds coefficients `a` and `b` for `y[i] = a*exp(b*x[i])`
+ * `expsum_fit(x, y, 2, withconst = true)` finds coefficients `k`, `p`, and `λ` for `y[i] = k + p[1]*exp(λ[1]*x[i]) + p[2]*exp(λ[2]*x[i])`
+ * `poly_fit(x, y, n)` finds coefficients `a[k]`  for 
    `y[i] = a[1] + a[2]*x[i] + a[3]*x[i]^2 + a[n+1]*x[i]^n`
  * `linear_king_fit(E, U)`, find coefficients `a` and `b` for `E[i]^2 = a + b*U^0.5`
  * `linear_rational_fit(x, y, p, q)` finds the coefficients for rational polynomials: `y[i] = (a[1] + a[2]*x[i] + ... + a[p+1]*x[i]^p) / (1 + a[p+1+1]*x[i] + ... + a[p+1+q]*x[i]^q)`

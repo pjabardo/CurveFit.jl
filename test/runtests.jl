@@ -266,6 +266,6 @@ f = curve_fit(RationalPoly, x, y, 2, 3)
     @test a[2] ≈ a0[2] rtol=1e-7
     @test a[3] ≈ a0[3] rtol=1e-7
     
-
+    @testset "ExpSumFit" begin include("expsumfit.jl") end
 end
 
