@@ -41,12 +41,13 @@ The algorithm is from
 function expsum_fit(x::AbstractVector{T}, y::AbstractVector{T}, n::Int; m::Int = 1, withconst::Bool = true, init::Union{Nothing,ExpSumFitInit} = nothing) where {T <: Real}
 	n > 0 || throw(ArgumentError("number of exponent terms should be a positive integer"))
 	length(x) == length(y) || throw(DimensionMismatch("input vectors should be equal in length"))
-	sc = expsum_scale!(x, y)
+	m ≥ 2 && !all(isapprox.(diff(x), x[2] - x[1])) && error("m=$m requires uniformly spaced x")
 	if isnothing(init)
 		init = expsum_init(x, n, m = m, withconst = withconst)
 	else
 		(init.n == n && init.m == m && size(init.Xc)[1] == length(x)) || error("Init does not match parameters")
 	end
+	sc = expsum_scale!(x, y)
 	expfit_solve(init, x, y, sc)
 end
 
@@ -68,7 +69,6 @@ end
 Initialize most of the memory needed for [`expsum_fit`](@ref).
 """
 function expsum_init(x::AbstractVector{T}, n::Int; m::Int = 1, withconst::Bool = true) where {T <: Real}
-	m ≥ 2 && !all(isapprox.(diff(x), x[2] - x[1])) && error("m=$m requires uniformly spaced x")
 	len = length(x)
 	nY, mY = 1 + (len - 1) ÷ m, 2n + withconst
 	return ExpSumFitInit(n, m, zeros(T, nY, mY), zeros(T, nY, n - 1),
