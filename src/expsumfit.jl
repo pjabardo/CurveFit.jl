@@ -1,4 +1,4 @@
-using LinearAlgebra: diagm, qr!, ColumnNorm, eigvals
+using LinearAlgebra: diagm, qr!, eigvals
 
 struct ExpSumFit{T<:Real, S<:Number} <: AbstractLeastSquares
 	k::T          # constant
@@ -222,7 +222,7 @@ end
 
 function expfit_solve_λ(init::ExpSumFitInit, y)
 	n, m, Y, A, Ā = init.n, init.m, init.Y, init.A, init.Ā
-	qrY = qr!(Y, ColumnNorm())
+	qrY = qr!(Y)
 	A .= qrY \ view(y, 1:m:length(y))
 	Ā[1,1:n] = A[1:n]
 	λ = eigvals(Ā)
