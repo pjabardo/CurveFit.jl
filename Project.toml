@@ -1,7 +1,7 @@
 name = "CurveFit"
 uuid = "5a033b19-8c74-5913-a970-47c3779ef25c"
 authors = ["Paulo José Saiz Jabardo <pjabardo@gmail.com> and contributors"]
-version = "0.3.6"
+version = "0.4.0"
 
 [deps]
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
