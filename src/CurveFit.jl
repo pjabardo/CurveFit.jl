@@ -20,9 +20,9 @@ The fitting algorithms include
  * Straight lines
  * Polynomial fitting
  * Power laws
- * log laws
- * exp laws
- * Rational polynopmial fitting
+ * Log laws
+ * Exp laws
+ * Rational polynomial fitting
  * A generic non-linear fitting algorithm
  * King's law (used in hotwire anemometry)
 
@@ -39,6 +39,7 @@ export LinearKingFit, KingFit
 export fit, coef
 export linear_rational_fit, RationalPoly, ratval, rational_fit
 export Polynomial
+export ExpSumFit, expsum_fit, expsum_init
 
 # package code goes here
 #"Abstract base class for fitting data"
@@ -52,6 +53,7 @@ include("linfit.jl")
 include("rationalfit.jl")
 include("nonlinfit.jl")
 include("king.jl")
+include("expsumfit.jl")
 
 """
 #Uses the object created by `curve_fit` to estimate values
