@@ -40,15 +40,19 @@ A rational polynomial is the ratio of two polynomials
 and it is often useful in approximating functions.
 """
 struct RationalPoly{T<:Number} <: AbstractLeastSquares
-    num::Polynomial{T}
-    den::Polynomial{T}
+    num::Vector{T}
+    den::Vector{T}
 end
-RationalPoly(a::AbstractVector{T}, b::AbstractVector{T}) where {T<:Number} = RationalPoly(Polynomial(a), Polynomial(b))
-RationalPoly(p::Integer, q::Integer, ::Type{T}=Float64) where {T<:Number} = RationalPoly{T}(Polynomial(zeros(T,p+1)), Polynomial(zeros(T,q+1)))
-RationalPoly(coefs::AbstractVector{T}, p, q) where {T<:Number} = RationalPoly(collect(coefs[1:p+1]),[one(T); collect(coefs[p+2:end])])
+RationalPoly(p::Integer, q::Integer, ::Type{T}=Float64) where {T<:Number} =
+    RationalPoly(zeros(T,p+1), zeros(T,q+1))
+                 
+    
+    
+RationalPoly(coefs::AbstractVector{T}, p, q) where {T<:Number} =
+    RationalPoly(collect(coefs[1:p+1]),[one(T); collect(coefs[p+2:end])])
 
 "Evaluate a rational polynomial"
-ratval(r::RationalPoly{T}, x) where {T<:Number} = r.num(x) / r.den(x)
+ratval(r::RationalPoly, x) = evalpoly(x, r.num) / evalpoly(x, r.den)
 
 "`call` overload for calling directly `ratval`"
 (r::RationalPoly)(x) = ratval(r, x)
@@ -59,13 +63,13 @@ function make_rat_fun(p, q)
     
     function(x, a)
         for i=0:p
-            r.num[i] = a[i+1]
+            r.num[i+1] = a[i+1]
         end
-        r.den[0] = 1
+        r.den[1] = 1
         for i = 1:q
-            r.den[i] = a[p+1+i]
+            r.den[i+1] = a[p+1+i]
         end
-        r.num(x[1]) / r.den(x[1]) - x[2]
+        evalpoly(x[1], r.num) / evalpoly(x[1], r.den) - x[2]
     end
     
 end
