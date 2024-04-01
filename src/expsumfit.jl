@@ -19,23 +19,28 @@ struct ExpSumFitInit{T <: Real}
     coeff::Matrix{T}       # numerical integration coefficients
 end
 
-"""
-        expsum_fit(x::Union{T,AbstractVector{T}}, y::AbstractVector{T}, n::Int; m::Int = 1, withconst::Bool = true, init::Union{Nothing,ExpSumFitInit} = nothing) where {T <: Real}
+@doc doc"""
+    expsum_fit(x::Union{T,AbstractVector{T}}, y::AbstractVector{T}, n::Int; m::Int = 1,
+        withconst::Bool = true,
+        init::Union{Nothing, ExpSumFitInit} = nothing) where {T <: Real}
 
 Fits the sum of `n` exponentials and a constant.
 
 ```math
-    y = k + p_1 e^{\\lambda_1 t} + p_2 e^{\\lambda_2 t} + \\ldots + p_n e^{\\lambda_n t}
+y = k + p_1 e^{\\lambda_1 t} + p_2 e^{\\lambda_2 t} + \\ldots + p_n e^{\\lambda_n t}
 ```
 
 If the keyword `withconst` is set to `false`, the constant is not fitted but set `k=0`.
 
-Uses numerical integration with `m` strips, where the default `m=1` uses linear interpolation.
-`m=2` and higher require uniform interval and usually lead to better accuracy.
+Uses numerical integration with `m` strips, where the default `m = 1` uses linear
+interpolation. `m = 2` and higher require uniform interval and usually lead to better
+accuracy.
 
-Passing `init` preallocates most needed memory, and can be initialized with [`expsum_init`](@ref).
+Passing `init` preallocates most needed memory, and can be initialized with
+[`expsum_init`](@ref).
 
-Returns a `ExpSumFit` struct containing a constant `k` and vectors `p`, `λ`, `τ`, where `τ = -1/λ`.
+Returns a `ExpSumFit` struct containing a constant `k` and vectors `p`, `λ`, `τ`, where
+`τ = -1/λ`.
 
 The algorithm is from
 [Matlab code of Juan Gonzales Burgos](https://github.com/juangburgos/FitSumExponentials).
@@ -56,12 +61,12 @@ function expsum_fit(x::AbstractVector{T}, y::AbstractVector{T},
             error("Init does not match parameters")
     end
     sc = expsum_scale!(x, y)
-    expfit_solve(init, x, y, sc)
+    return expfit_solve(init, x, y, sc)
 end
 
 function expsum_fit(dx::T, y::AbstractVector{T}, n::Int; kwargs...) where {T <: Real}
     x = collect(range(0, step = dx, length = length(y)))
-    expsum_fit(x, y, n; kwargs...)
+    return expsum_fit(x, y, n; kwargs...)
 end
 
 function expsum_scale!(x::AbstractVector{T}, y::AbstractVector{T}) where {T <: Real}
@@ -72,7 +77,8 @@ function expsum_scale!(x::AbstractVector{T}, y::AbstractVector{T}) where {T <: R
 end
 
 """
-    expsum_init(x::AbstractVector{T}, n::Int; m::Int = 1, withconst::Bool = true) where {T <: Real}
+    expsum_init(x::AbstractVector{T}, n::Int; m::Int = 1,
+        withconst::Bool = true) where {T <: Real}
 
 Initialize most of the memory needed for [`expsum_fit`](@ref).
 """
@@ -146,7 +152,7 @@ function cumints!(
             end
         end
     end
-    nothing
+    return nothing
 end
 
 """
@@ -172,7 +178,7 @@ function calc_integral_rules(n::Int; m::Int = 2)
 end
 
 function calc_integral_rules(ns::Union{UnitRange{Int}, Vector{Int}}; m::Int = 2)
-    reduce(vcat, [calc_integral_rules(n, m = m) for n in ns])
+    return reduce(vcat, [calc_integral_rules(n, m = m) for n in ns])
 end
 
 """
@@ -200,7 +206,7 @@ function expsum_fill_Y!(
             Y[i, j + n + 1] = x[m * (i - 1) + 1]^j
         end
     end
-    nothing
+    return nothing
 end
 
 """
@@ -232,7 +238,7 @@ function expsum_fill_X!(init::ExpSumFitInit, x::AbstractVector{T}, λ::AbstractV
             X[i, j] = 1.0
         end
     end
-    nothing
+    return nothing
 end
 
 function expfit_solve_λ(init::ExpSumFitInit, y)

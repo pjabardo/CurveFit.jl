@@ -1,7 +1,7 @@
 # Rational polynomial interpolation
 
 """
-Linear Rational LeastSquares
+# Linear Rational LeastSquares
 
 The following curvit is done:
 
@@ -29,9 +29,8 @@ function linear_rational_fit(
         end
     end
 
-    fit_linear_model(A, y)
+    return fit_linear_model(A, y)
     #    coefs[1:p+1], [1.0; coefs[p+2:end]]
-
 end
 
 """
@@ -45,11 +44,11 @@ struct RationalPoly{T <: Number} <: AbstractLeastSquares
     den::Vector{T}
 end
 function RationalPoly(p::Integer, q::Integer, ::Type{T} = Float64) where {T <: Number}
-    RationalPoly(zeros(T, p + 1), zeros(T, q + 1))
+    return RationalPoly(zeros(T, p + 1), zeros(T, q + 1))
 end
 
 function RationalPoly(coefs::AbstractVector{T}, p, q) where {T <: Number}
-    RationalPoly(collect(coefs[1:(p + 1)]), [one(T); collect(coefs[(p + 2):end])])
+    return RationalPoly(collect(coefs[1:(p + 1)]), [one(T); collect(coefs[(p + 2):end])])
 end
 
 """
@@ -68,7 +67,7 @@ Auxiliary function used in nonlinear least squares
 function make_rat_fun(p, q)
     r = RationalPoly(p, q, Float64)
 
-    function (x, a)
+    return function (x, a)
         for i in 0:p
             r.num[i + 1] = a[i + 1]
         end
@@ -93,9 +92,9 @@ function rational_fit(x, y, p, q, eps = 1e-8, maxiter = 200)
 
     coefs, converged, niter = nonlinear_fit(hcat(x, y), fun, coefs0, eps, maxiter)
 
-    coefs
+    return coefs
 end
 
 function curve_fit(::Type{RationalPoly}, x, y, p, q, eps = 1e-8, maxiter = 200)
-    RationalPoly(rational_fit(x, y, p, q, eps, maxiter), p, q)
+    return RationalPoly(rational_fit(x, y, p, q, eps, maxiter), p, q)
 end

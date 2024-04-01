@@ -1,7 +1,7 @@
-
 """
 Original Kings law (1910) represents the relation between voltage and velocity
 in a hotwire anemometer.
+
 The law is given by:
 
 `E^2 = A + B*U^0.5`
@@ -17,6 +17,7 @@ struct LinearKingFit{T <: Number} <: AbstractLeastSquares
     coefs::NTuple{2, T} #Array{Float64,1}
     LinearKingFit(A::T, B::T) where {T <: Number} = new{T}((A, B))
     LinearKingFit(coefs::NTuple{2, T}) where {T <: Number} = new{T}(coefs)
+
     function LinearKingFit(E::AbstractVector{T}, U::AbstractVector{T}) where {T <: Number}
         new{T}(linear_king_fit(E, U))
     end
@@ -51,6 +52,7 @@ Type that represents the modified King's law
 """
 struct KingFit{T <: Number} <: AbstractLeastSquares
     coefs::NTuple{3, T} #Array{Float64,1}
+
     KingFit(A::T, B::T, n::T) where {T <: Number} = new{T}((A, B, n)) #copy(coefs))
     KingFit(coefs::NTuple{3, T}) where {T <: Number} = new{T}(coefs)
     KingFit(A::T, B::T) where {T <: Number} = new{T}((A, B, one(T) / 2))
