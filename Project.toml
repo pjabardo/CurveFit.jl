@@ -1,7 +1,7 @@
 name = "CurveFit"
 uuid = "5a033b19-8c74-5913-a970-47c3779ef25c"
 authors = ["Paulo José Saiz Jabardo <pjabardo@gmail.com> and contributors"]
-version = "0.6.0"
+version = "0.7.0"
 
 [deps]
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
@@ -9,7 +9,7 @@ Polynomials = "f27b6e38-b328-58d1-80ce-0feddd5e7a45"
 
 [compat]
 Polynomials = "1, 2, 3, 4"
-julia = "^1.6"
+julia = "1.6"
 
 [extras]
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
