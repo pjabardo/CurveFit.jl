@@ -141,13 +141,16 @@ ExpFit(x::AbstractVector{T}, y::AbstractVector{T}) where {T<:Number} = ExpFit{T}
 # Generic interface for curve fitting.
 
 The same function `curve_fit` can be used to fit the data depending on fit type, 
-shich is specified in the first parameter. This function returns an object that
+which is specified in the first parameter. This function returns an object that
 can be used to estimate the value of the fitting model using function `apply_fit`.
 
 ## A few examples:
 
  * `f = curve_fit(LinearFit, x, y)`
  * `f = curve_fit(Polynomial, x, y, n)`
+
+
+Other types of fit include: LogFit, PowerFit, ExpFit, LinearKingFit, KingFit, RationalPoly. See the documentation for details.
 """
 curve_fit(::Type{T}, x, y) where {T<:AbstractLeastSquares} = T(x, y)
 curve_fit(::Type{T}, x, y, args...) where {T<:AbstractLeastSquares} = T(x, y, args...)
